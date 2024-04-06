@@ -1,0 +1,11 @@
+services:
+  builderx:
+    image: itsaniket61/builderx:latest
+    container_name: builderx
+    environment:
+      - STORAGE_SERVICE_URL=http://localhost:8081
+      - CRAFTER_SERVICE_URL=http://localhost:8080
+      - GATEWAY_SERVICE_URL=http://localhost:3000
+      - PORT=80
+    ports:
+      - "80:80"
