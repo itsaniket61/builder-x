@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/gateway/:path*',
-        destination: process.env.GATEWAY_SERVICE_URL+'/:path*',
+        destination: process.env.GATEWAY_SERVICE_URL || 'http://localhost:3000'+'/:path*',
       },
     ];
   },
