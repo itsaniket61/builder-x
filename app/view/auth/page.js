@@ -1,33 +1,61 @@
 'use client'
 import { showToast } from '@/components/Toast/Toast';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AuthUtil } from './Utils/AuthUtil';
+import { useAuth } from './Hooks/useAuth';
 
 function Auth() {
-    const [isSignInSreen,setIsSignInScreen] = useState(true);
+    const [isSignInScreen,setIsSignInScreen] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [formData,setFormData] = useState({
         name: '',
         email: '',
         password: ''
     });
 
-
+    useAuth('/', '/view/auth');
+    
     const switchAuth = (e) => {
         e.preventDefault();
-        setIsSignInScreen(!isSignInSreen);
-        showToast("You are now signed in");
+        setIsSignInScreen(!isSignInScreen);
     }
 
-    const signIn = async (e) => {
-        e.preventDefault();
-        const {email, password} = formData;
+    const signIn = async ({email,password}) => {
         AuthUtil.signIn(email,password).then(({token}) => {
-            localStorage.setItem('token',token);
             window.location.reload();
         }).catch((err)=>{
             showToast(err.message,"error");
         });
     }
+
+    const signUp = async ({name, email, password}) => {
+      AuthUtil.signUp(name, email, password).then((res) => {
+        if(res){
+          window.location.reload();
+        }
+        throw new Error("Somewhere went wrong")
+      }).catch((err)=>{
+        console.log(err);
+        showToast(err.message,"error");
+      });
+    }
+
+    useEffect(() => {
+      const submitForm = async () => {
+        if (isLoading) {
+          console.log(isLoading);
+          console.log('Form is submitting...');
+          if (isSignInScreen) {
+            await signIn(formData);
+          } else {
+            await signUp(formData);
+          }
+          console.log('Form submitted successfully!');
+          setIsLoading(false);
+        }
+      };
+      submitForm();
+    }, [isLoading, isSignInScreen, formData]);
 
   return (
     <div className='bg-dolly-200 h-screen'>
@@ -35,8 +63,11 @@ function Auth() {
         <h1 className='my-4 text-4xl text-center font-bold'>BuildifyX</h1>
         <div className='container bg-white p-4 rounded-lg shadow-lg mx-auto'>
           <h1 className='text-3xl font-bold text-center'>Sign In</h1>
-          <form className='mt-2' onSubmit={signIn}>
-            {!isSignInSreen && <input
+          <form className='mt-2' onSubmit={(e)=>{
+            e.preventDefault();
+            setIsLoading(true);
+          }}>
+            {!isSignInScreen && <input
               type='text'
               onChange={(e)=>setFormData({...formData,name:e.target.value})}
               value={formData.name}
@@ -58,20 +89,20 @@ function Auth() {
               placeholder='Password'
             />
             <div className='w-full'>
-              <button
+              {!isLoading? <button
                 type='submit'
                 className='text-white py-2 px-8 rounded-md bg-black hover:bg-dolly-600 
                 uppercase font-semibold'
               >
-                {isSignInSreen ? 'Sign In' : 'Sign Up'}
-              </button>
+                {isSignInScreen ? 'Sign In' : 'Sign Up'}
+              </button>:<p>Loading...</p>}
             </div>
           </form>
           <button
             onClick={switchAuth}
             className='text-dolly-900 hover:text-dolly-700 mt-2'
           >
-            {isSignInSreen
+            {isSignInScreen
               ? 'Create New Account'
               : 'Already have a new account.'}
           </button>

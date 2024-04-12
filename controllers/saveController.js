@@ -12,7 +12,7 @@ export const saveController = async (request) => {
     markup = newMarkup;
     style = newStyle;
     data = newData;
-    outputFileName = newOutputFileName+'_'+Date.now().toString();
+    outputFileName = outputFileName+'_'+Date.now().toString();
   }
   const uid = request.headers.get('uid');
   const {response} = await builderService.save({ markup, style, data, uid, folderPath, outputFileName });
