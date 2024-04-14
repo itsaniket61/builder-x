@@ -25,11 +25,34 @@ export const CloudKeeperUtil = {
     console.log('Upload successful:', responseBody);
     return response.ok;
   },
+  getDownloadUrl: async (uid, filePath)=>{
+    filePath = 'BuildersX/' + uid + '/' + filePath;
+    const url = AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/file?filePath=' + filePath;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'data': Date.now().toString(),
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to download file');
+    }
+
+    const responseBody = await response.json();
+    const { downloadUrl } = responseBody.response;
+    return {downloadUrl};
+  },
   downloadFile: async (uid, filePath)=>{
     filePath = 'BuildersX/' + uid + '/' + filePath;
     const url = AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/file?filePath=' + filePath;
     const response = await fetch(url, {
-      method: 'GET'
+      method: 'GET',
+      headers: {
+        date: Date.now().toString(),
+      }
     });
 
     if (!response.ok) {
@@ -44,5 +67,34 @@ export const CloudKeeperUtil = {
     const blob = await downloadRes.blob();
     console.log('Download successful');
     return blob;
+  },
+
+  listAllFiles: async (uid, folderName)=>{
+    console.log(folderName);
+    if(folderName){
+      folderName = 'BuildersX/' + uid + '/' + folderName;
+    }else{
+      folderName = 'BuildersX/' + uid;
+    }
+    const url =
+      AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/folder?folderName=' + folderName;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'date': Date.now().toString()
+      },
+    });
+    console.log(url);
+    if (!response.ok) {
+      throw new Error('Failed to list files');
+    }
+
+    const responseBody = await response.json();
+    const files = responseBody.response;
+    if (!files) throw new Error('Failed to list files');
+    return files;
   }
 };

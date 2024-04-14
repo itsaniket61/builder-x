@@ -1,17 +1,17 @@
 [
     {
         "name": "Home",
-        "href": "#",
+        "href": "/",
         "newTab": false
     },
     {
-        "name": "Services",
-        "href": "#services-section",
+        "name": "Explorer",
+        "href": "/view/explorer",
         "newTab": false
     },
     {
-        "name": "About",
-        "href": "#about-section",
+        "name": "Build",
+        "href": "/view/build",
         "newTab": false
     },
     {

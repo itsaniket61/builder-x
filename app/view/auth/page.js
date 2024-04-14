@@ -1,84 +1,160 @@
-'use client'
+'use client';
 import { showToast } from '@/components/Toast/Toast';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { AuthUtil } from './Utils/AuthUtil';
+import { useAuth } from './Hooks/useAuth';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@radix-ui/react-context-menu';
 
 function Auth() {
-    const [isSignInSreen,setIsSignInScreen] = useState(true);
-    const [formData,setFormData] = useState({
-        name: '',
-        email: '',
-        password: ''
-    });
+  const [isSignInScreen, setIsSignInScreen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
 
+  useAuth('/', '/view/auth');
 
-    const switchAuth = (e) => {
-        e.preventDefault();
-        setIsSignInScreen(!isSignInSreen);
-        showToast("You are now signed in");
-    }
+  const switchAuth = (e) => {
+    e.preventDefault();
+    setIsSignInScreen(!isSignInScreen);
+  };
 
-    const signIn = async (e) => {
-        e.preventDefault();
-        const {email, password} = formData;
-        AuthUtil.signIn(email,password).then(({token}) => {
-            localStorage.setItem('token',token);
-            window.location.reload();
-        }).catch((err)=>{
-            showToast(err.message,"error");
+  const signIn = async ({ email, password }) => {
+    AuthUtil.signIn(email, password)
+      .then(({ token }) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        showToast(err.message, 'error', {
+          position: 'top-center',
         });
-    }
+      });
+  };
+
+  const signUp = async ({ name, email, password }) => {
+    AuthUtil.signUp(name, email, password)
+      .then((res) => {
+        if (res) {
+          window.location.reload();
+        }
+        throw new Error('Somewhere went wrong');
+      })
+      .catch((err) => {
+        console.log(err);
+        showToast(err.message, 'error',{
+          position: 'top-center'
+        });
+      });
+  };
+
+  useEffect(() => {
+    const submitForm = async () => {
+      if (isLoading) {
+        console.log(isLoading);
+        console.log('Form is submitting...');
+        if (isSignInScreen) {
+          await signIn(formData);
+        } else {
+          await signUp(formData);
+        }
+        console.log('Form submitted successfully!');
+        setIsLoading(false);
+      }
+    };
+    submitForm();
+  }, [isLoading, isSignInScreen]);
 
   return (
-    <div className='bg-dolly-200 h-screen'>
-      <div className='p-10'>
-        <h1 className='my-4 text-4xl text-center font-bold'>BuildifyX</h1>
-        <div className='container bg-white p-4 rounded-lg shadow-lg mx-auto'>
-          <h1 className='text-3xl font-bold text-center'>Sign In</h1>
-          <form className='mt-2' onSubmit={signIn}>
-            {!isSignInSreen && <input
-              type='text'
-              onChange={(e)=>setFormData({...formData,name:e.target.value})}
-              value={formData.name}
-              className='form-control outline-dolly-700 text-xl w-full p-2 border rounded-lg border-black mb-2'
-              placeholder='Name'
-            />}
-            <input
-              type='email'
-              onChange={(e)=>setFormData({...formData,email:e.target.value})}
-              value={formData.email}
-              className='form-control outline-dolly-700 text-xl w-full p-2 border rounded-lg border-black mb-2'
-              placeholder='Email'
-            />
-            <input
-              type='password'
-              onChange={(e)=>setFormData({...formData,password:e.target.value})}
-              value={formData.password}
-              className='form-control outline-dolly-700 text-xl w-full p-2 border rounded-lg border-black mb-2'
-              placeholder='Password'
-            />
-            <div className='w-full'>
-              <button
-                type='submit'
-                className='text-white py-2 px-8 rounded-md bg-black hover:bg-dolly-600 
-                uppercase font-semibold'
-              >
-                {isSignInSreen ? 'Sign In' : 'Sign Up'}
-              </button>
+    <div className='md:flex items-center justify-center h-screen'>
+      <Card className='w-full max-w-sm mx-auto'>
+        <CardHeader>
+          <CardTitle className='text-2xl'>
+            {isSignInScreen ? 'Sign In' : 'Sign Up'}
+          </CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className='grid gap-4'>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setIsLoading(true);
+            }}
+          >
+            {!isSignInScreen && (
+              <div className='grid gap-2'>
+                <Label htmlFor='email'>Name</Label>
+                <Input
+                  id='name'
+                  type='text'
+                  placeholder='Aniket Sharma'
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  value={formData.name}
+                  required
+                />
+              </div>
+            )}
+            <div className='grid gap-2'>
+              <Label htmlFor='email'>Email</Label>
+              <Input
+                id='email'
+                type='email'
+                placeholder='m@example.com'
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                value={formData.email}
+                required
+              />
+            </div>
+            <div className='grid gap-2'>
+              <Label htmlFor='password'>Password</Label>
+              <Input
+                id='password'
+                type='password'
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                value={formData.password}
+                required
+              />
             </div>
           </form>
-          <button
-            onClick={switchAuth}
-            className='text-dolly-900 hover:text-dolly-700 mt-2'
+        </CardContent>
+        <CardFooter>
+          <Button
+            className='w-full mr-1'
+            onClick={(e) => {
+              e.preventDefault();
+              setIsLoading(true);
+            }}
           >
-            {isSignInSreen
+            {isSignInScreen ? 'Sign In' : 'Sign Up'}
+          </Button>
+          <Button variant='outline' onClick={switchAuth}>
+            {isSignInScreen
               ? 'Create New Account'
               : 'Already have a new account.'}
-          </button>
-        </div>
-      </div>
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
 
-export default Auth
+export default Auth;

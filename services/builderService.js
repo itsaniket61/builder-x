@@ -77,6 +77,7 @@ const save = async ({
 };
 
 const buildWithAi = async(prompt)=>{
+  console.log("Building file with ai... "+ prompt);
   const tempPrompt = prompt;
   try {
     prompt = `
@@ -87,8 +88,9 @@ const buildWithAi = async(prompt)=>{
     "data": "{ \"name\": \"Aniket\", \"age\": 30 }",
     "outputFileName":"Aniket"
   }
-  Give best possible html markup template. 
-  Give such json for instructions : ${prompt}
+  Give best possible html markup and proper colours in css template with professional designing. 
+  Give response only in json nothing else.
+  Fllow above instructions strictly and ${prompt}
 `;
     const genAI = new GoogleGenerativeAI(process.env.AI_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
@@ -97,7 +99,7 @@ const buildWithAi = async(prompt)=>{
     const text = response.text();
     return JSON.parse(text);
   } catch (error) {
-    console.log("Retrying...");
+    console.log(error.message, "Retrying...");
     return buildWithAi(tempPrompt);
   }
 }
