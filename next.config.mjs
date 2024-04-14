@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const nextConfig = {
+  experimental: {
+    proxyTimeout: 30000000,
+  },
   async rewrites() {
     return [
       {

@@ -3,15 +3,13 @@ export const buildUtil = {
         const url = '/gateway/api/builder/v1/save';
         const options = {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify({
                 folderPath: folderPath,
                 outputFileName: outputFileName,
                 prompt: prompt
             })
         };
+        console.log(options);
         const req = await fetch(url, options);
         if (req.status == 200) {
             const res = await req.json();

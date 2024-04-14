@@ -2,6 +2,8 @@
 import Image from 'next/image';
 import React from 'react'
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { AuthUtil } from '@/app/view/auth/Utils/AuthUtil';
 import { useAuth } from '@/app/view/auth/Hooks/useAuth';
 
@@ -33,20 +35,19 @@ function HeroSection() {
         <p className='mb-8 mt-4  text-2xl tracking-wide'>
           Build with Amaze and Power....
         </p>
-        <Link
-          href="/view/build"
-          className='text-white py-4 px-8 rounded-md bg-black hover:bg-dolly-600 
-                uppercase font-semibold mr-2'
-        >
-          Build
-        </Link>
-        <button
-          onClick={signout}
-          className='text-white py-4 px-8 rounded-md bg-black hover:bg-dolly-600 
-                uppercase font-semibold mr-2'
-        >
+        <Button asChild>
+          <Link href='/view/build' className='mr-2'>
+            Build
+          </Link>
+        </Button>
+        <Button asChild>
+          <Link href='/view/explorer' className='mr-2'>
+            Explorer
+          </Link>
+        </Button>
+        <Button variant='outline' onClick={signout}>
           Logout
-        </button>
+        </Button>
       </div>
     </div>
   );
