@@ -16,7 +16,6 @@ export const explorerUtil = {
     const req = await fetch(url);
     if (req.ok) {
       const res = await req.json();
-      console.log(res);
       return res;
     }
     const res = await req.json();

@@ -52,7 +52,6 @@ function Auth() {
         throw new Error('Somewhere went wrong');
       })
       .catch((err) => {
-        console.log(err);
         showToast(err.message, 'error',{
           position: 'top-center'
         });
@@ -62,14 +61,11 @@ function Auth() {
   useEffect(() => {
     const submitForm = async () => {
       if (isLoading) {
-        console.log(isLoading);
-        console.log('Form is submitting...');
         if (isSignInScreen) {
           await signIn(formData);
         } else {
           await signUp(formData);
         }
-        console.log('Form submitted successfully!');
         setIsLoading(false);
       }
     };

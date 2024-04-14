@@ -40,7 +40,6 @@ function Explorer() {
        }
 
        const folders = data?.children || [];
-       console.log("Folders: " , folders);
        const files = folders;
 
        const handleFolderSelection = (folderPath) => {

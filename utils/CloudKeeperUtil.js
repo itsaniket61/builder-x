@@ -70,7 +70,6 @@ export const CloudKeeperUtil = {
   },
 
   listAllFiles: async (uid, folderName)=>{
-    console.log(folderName);
     if(folderName){
       folderName = 'BuildersX/' + uid + '/' + folderName;
     }else{
@@ -87,7 +86,6 @@ export const CloudKeeperUtil = {
         'date': Date.now().toString()
       },
     });
-    console.log(url);
     if (!response.ok) {
       throw new Error('Failed to list files');
     }

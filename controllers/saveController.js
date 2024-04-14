@@ -9,7 +9,6 @@ export const saveController = async (request) => {
     let body = await request.json();
     let { markup, style, data, folderPath, outputFileName, prompt } =
       body;
-    console.log(body);
     if (prompt) {
       console.log('Building with Artificial Intelligence....');
       const {
