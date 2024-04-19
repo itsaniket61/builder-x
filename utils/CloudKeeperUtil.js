@@ -68,7 +68,6 @@ export const CloudKeeperUtil = {
     console.log('Download successful');
     return blob;
   },
-
   listAllFiles: async (uid, folderName)=>{
     if(folderName){
       folderName = 'BuildersX/' + uid + '/' + folderName;
@@ -94,5 +93,24 @@ export const CloudKeeperUtil = {
     const files = responseBody.response;
     if (!files) throw new Error('Failed to list files');
     return files;
+  },
+  deleteFile: async (uid, filePath)=>{
+    filePath = 'BuildersX/' + uid + '/' + filePath;
+    const url = AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/file?path=' + filePath;
+    console.log(url);
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'date': Date.now().toString()
+      },
+    });
+    const json = await response.json();
+    console.log(json);
+    if (!response.ok) {
+      throw new Error('Failed to delete file');
+    }
+    return true;
   }
 };

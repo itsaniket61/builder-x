@@ -14,20 +14,20 @@ function Explorer() {
     const [error, setError] = useState(null);
     const [folderPath, setFolderPath] = useState(null);
 
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const jsonData = await explorerUtil.getFiles({
-              folderPath: folderPath,
-            });
-            setData(jsonData);
-            setIsLoading(false);
-          } catch (error) {
-            setError(error);
-            setIsLoading(false);
-          }
-        };
+    const fetchData = async () => {
+      try {
+        const jsonData = await explorerUtil.getFiles({
+          folderPath: folderPath,
+        });
+        setData(jsonData);
+        setIsLoading(false);
+      } catch (error) {
+        setError(error);
+        setIsLoading(false);
+      }
+    };
 
+      useEffect(() => {
         fetchData();
       }, [folderPath]);
     
@@ -46,10 +46,14 @@ function Explorer() {
         setFolderPath(folderPath);
        };
 
+       const refreshList = async () => {
+        fetchData();
+       }
+
     return (
       <div className='flex h-screen'>
         <div className='flex-1 p-2'>
-          <FileList files={files} selectFolder={handleFolderSelection} folderPath={folderPath}/>
+          <FileList files={files} selectFolder={handleFolderSelection} refresh={refreshList} folderPath={folderPath}/>
         </div>
       </div>
     );

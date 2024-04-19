@@ -1,19 +1,4 @@
 import { explorerUtil } from '@/app/view/explorer/Utils/explorerUtil';
-import {
-  ContextMenu,
-  ContextMenuCheckboxItem,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuRadioGroup,
-  ContextMenuRadioItem,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
-} from '@/components/ui/context-menu';
 
 import {
   Table,
@@ -26,15 +11,94 @@ import {
 } from '@/components/ui/table';
 
 import { useState } from 'react';
+import ContextMenu from '../ui/context-menu';
+import { showToast } from '../Toast/Toast';
+import { Button } from '../ui/button';
 
-const FileList = ({ folderPath, files, selectFolder }) => {
+const FileList = ({ folderPath, files, selectFolder, refresh }) => {
   const iconsMap = {
     pdf: '/icons/pdf.png',
     craftx: '/icons/document.png',
   };
-  const [currentSelectedFile, setCurrentSelectedFile] = useState(undefined);
+
+  const [contextMenuOptions, setContextMenuOptions] = useState({});
+  const [routingStack, setRoutingStack] = useState([]);
+
+  const handleListItemClick = async (file) => {
+    if (file.type === 'directory') {
+      let temp = routingStack;
+      temp.push(file.name);
+      setRoutingStack(temp);
+      selectFolder(routingStack.join('/'));
+    }
+  };
+
+  const handleContextMenu = (event, file) => {
+    event.preventDefault();
+    const folderMenuOptions = [
+      {
+        label: 'Rename',
+        action: async () => {
+          console.log('Downloading file:', file);
+        },
+      },
+      {
+        label: 'Delete',
+        action: () => {
+          console.log('Deleting file:', file);
+        },
+      },
+    ];
+
+    const fileMenuOptions = [
+      {
+        label: 'Rename',
+        action: async () => {
+          console.log('Downloading file:', file);
+        },
+      },
+      {
+        label: 'Downlaod',
+        action: async () => {
+          const { downloadUrl } = await explorerUtil.downloadFile({
+            filePath: folderPath + '/' + file.name,
+          });
+          window.open(downloadUrl, '_blank');
+        },
+      },
+      {
+        label: 'Delete',
+        action: async () => {
+          console.log('Deleting file:', file);
+          await explorerUtil.deleteFile({
+            filePath: routingStack.join('/') + '/' + file.name,
+          });
+          refreshList();
+          selectFolder(routingStack.join('/'));
+          showToast('File deleted successfully');
+        },
+      },
+    ];
+    if (file.type === 'directory') {
+      setContextMenuOptions({
+        options: folderMenuOptions,
+        position: { x: event.clientX, y: event.clientY },
+      });
+    } else {
+      setContextMenuOptions({
+        options: fileMenuOptions,
+        position: { x: event.clientX, y: event.clientY },
+      });
+    }
+  };
+
+  const refreshList = () => {
+    refresh();
+  };
 
   return (
+    <>
+      <h3>{routingStack.join(' > ')}</h3>
       <Table>
         <TableHeader>
           <TableRow>
@@ -55,19 +119,13 @@ const FileList = ({ folderPath, files, selectFolder }) => {
             return (
               <TableRow
                 key={index}
-                onClick={async () => {
-                  if (file.type === 'directory') {
-                    selectFolder(file.name);
-                  } else {
-                    setCurrentSelectedFile(file);
-                    const { downloadUrl } = await explorerUtil.downloadFile({
-                      filePath: folderPath + '/' + currentSelectedFile.name,
-                    });
-                    window.open(downloadUrl, '_blank');
-                  }
-                }}
+                className='cursor-pointer'
+                onContextMenu={(event) => handleContextMenu(event, file)}
               >
-                <TableCell className='font-medium'>
+                <TableCell
+                  className='font-medium'
+                  onClick={(e) => handleListItemClick(file)}
+                >
                   <img
                     src={
                       file.type == 'directory'
@@ -76,14 +134,29 @@ const FileList = ({ folderPath, files, selectFolder }) => {
                     }
                   />
                 </TableCell>
-                <TableCell>{name}</TableCell>
-                <TableCell>{file.created_at}</TableCell>
-                <TableCell>{file.modified_at}</TableCell>
+                <TableCell onClick={(e) => handleListItemClick(file)}>
+                  {name}
+                </TableCell>
+                <TableCell onClick={(e) => handleListItemClick(file)}>
+                  {file.created_at}
+                </TableCell>
+                <TableCell onClick={(e) => handleListItemClick(file)}>
+                  {file.modified_at}
+                </TableCell>
+                <TableCell onClick={(e) => handleContextMenu(e, file)}>
+                  ...
+                </TableCell>
               </TableRow>
             );
           })}
         </TableBody>
       </Table>
+      <ContextMenu
+        options={contextMenuOptions.options}
+        position={contextMenuOptions.position || { x: 0, y: 0 }}
+        onClose={() => setContextMenuOptions({})}
+      />
+    </>
   );
 };
 
