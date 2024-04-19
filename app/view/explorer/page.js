@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../auth/Hooks/useAuth'
-import FolderHierarchy from '@/components/Explorer/FolderHierarchy';
 import FileList from '@/components/Explorer/FileList';
 import { explorerUtil } from './Utils/explorerUtil';
 import Loading from '@/components/Loading/Loading';

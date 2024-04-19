@@ -1,19 +1,15 @@
-import { explorerUtil } from '@/app/view/explorer/Utils/explorerUtil';
-
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ContextMenu from '../ui/context-menu';
 import { showToast } from '../Toast/Toast';
-import { Button } from '../ui/button';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '../ui/breadcrumb';
+import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from '../ui/table';
+import { explorerUtil } from '@/app/view/explorer/Utils/explorerUtil';
 
 const FileList = ({ folderPath, files, selectFolder, refresh }) => {
   const iconsMap = {
@@ -24,12 +20,14 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
   const [contextMenuOptions, setContextMenuOptions] = useState({});
   const [routingStack, setRoutingStack] = useState([]);
 
+  useEffect(() => {
+    selectFolder(routingStack.join('/'));
+    console.log('Routing changed');
+  }, [routingStack]);
+
   const handleListItemClick = async (file) => {
     if (file.type === 'directory') {
-      let temp = routingStack;
-      temp.push(file.name);
-      setRoutingStack(temp);
-      selectFolder(routingStack.join('/'));
+      setRoutingStack([...routingStack, file.name]); // Update routing stack with immutability
     }
   };
 
@@ -58,7 +56,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
         },
       },
       {
-        label: 'Downlaod',
+        label: 'Download',
         action: async () => {
           const { downloadUrl } = await explorerUtil.downloadFile({
             filePath: folderPath + '/' + file.name,
@@ -73,8 +71,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
           await explorerUtil.deleteFile({
             filePath: routingStack.join('/') + '/' + file.name,
           });
-          refreshList();
-          selectFolder(routingStack.join('/'));
+          refresh();
           showToast('File deleted successfully');
         },
       },
@@ -92,13 +89,26 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
     }
   };
 
-  const refreshList = () => {
-    refresh();
-  };
 
   return (
     <>
-      <h3>{routingStack.join(' > ')}</h3>
+      <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+        {
+          routingStack.map((folder,index)=>(<>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+            <BreadcrumbLink className='cursor-pointer' onClick={()=>{
+              setRoutingStack(routingStack.slice(0,index+1));
+            }}>{folder}</BreadcrumbLink>
+            </BreadcrumbItem>
+            </>))
+        }
+        </BreadcrumbList>
+      </Breadcrumb>
       <Table>
         <TableHeader>
           <TableRow>
