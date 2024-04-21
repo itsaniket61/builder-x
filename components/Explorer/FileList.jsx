@@ -136,7 +136,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       {!files ? (
         <Loading />
       ) : files.length > 0 ? (
-        <div className='max-w-sm sm:max-w-full overflow-x-auto'>
+        <div className='w-screen overflow-x-auto'>
           <Table>
             <TableHeader>
               <TableRow>
