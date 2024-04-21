@@ -96,7 +96,7 @@ const buildWithAi = async(prompt)=>{
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
     return JSON.parse(text);
   } catch (error) {
     console.log(error.message, "Retrying...");

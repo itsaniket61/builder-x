@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Label } from '@radix-ui/react-context-menu';
+import Loading from '@/components/Loading/Loading';
 
 function Auth() {
   const [isSignInScreen, setIsSignInScreen] = useState(true);
@@ -24,7 +25,7 @@ function Auth() {
     password: '',
   });
 
-  useAuth('/', '/view/auth');
+  const auth = useAuth('/', '/view/auth');
 
   const switchAuth = (e) => {
     e.preventDefault();
@@ -72,8 +73,10 @@ function Auth() {
     submitForm();
   }, [isLoading, isSignInScreen]);
 
+  if (auth.isLoading) return <Loading/>;
+
   return (
-    <div className='md:flex items-center justify-center h-screen'>
+    <div className='w-full'>
       <Card className='w-full max-w-sm mx-auto'>
         <CardHeader>
           <CardTitle className='text-2xl'>

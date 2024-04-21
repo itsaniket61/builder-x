@@ -7,7 +7,7 @@ import Loading from '@/components/Loading/Loading';
 
 function Explorer() {
 
-    useAuth('/view/explorer', '/view/auth');
+    const auth = useAuth('/view/explorer', '/view/auth');
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -15,6 +15,7 @@ function Explorer() {
 
     const fetchData = async () => {
       try {
+        setData(undefined);
         const jsonData = await explorerUtil.getFiles({
           folderPath: folderPath,
         });
@@ -38,7 +39,7 @@ function Explorer() {
          return <div>Error: {error.message}</div>;
        }
 
-       const folders = data?.children || [];
+       const folders = data!=undefined ? data.children : undefined;
        const files = folders;
 
        const handleFolderSelection = (folderPath) => {
@@ -48,6 +49,8 @@ function Explorer() {
        const refreshList = async () => {
         fetchData();
        }
+
+    if (auth.isLoading) return <Loading/>;
 
     return (
       <div className='flex h-screen'>

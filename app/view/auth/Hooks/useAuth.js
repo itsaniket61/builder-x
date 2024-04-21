@@ -1,15 +1,18 @@
-import { AppConstants } from '@/Constants/AppConstants';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { AppConstants } from '@/Constants/AppConstants';
 
 export function useAuth(successPath, failedPath) {
-  const url = AppConstants.URLS.AUTH_SERVICE_URL_V1 + '/token';
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(url);
+        const response = await fetch(
+          AppConstants.URLS.AUTH_SERVICE_URL_V1 + '/token'
+        );
+
         if (response.ok) {
           router.push(successPath);
         } else {
@@ -18,9 +21,13 @@ export function useAuth(successPath, failedPath) {
       } catch (error) {
         console.error('Error fetching authentication data:', error);
         router.push(failedPath);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [url, successPath, failedPath, router]);
+  }, [successPath, failedPath, router]);
+
+  return { isLoading };
 }

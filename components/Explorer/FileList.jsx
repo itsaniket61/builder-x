@@ -10,11 +10,15 @@ import {
 } from '../ui/breadcrumb';
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from '../ui/table';
 import { explorerUtil } from '@/app/view/explorer/Utils/explorerUtil';
+import Image from 'next/image';
+import Loading from '../Loading/Loading';
+import { Button } from '../ui/button';
+import { RefreshCcw } from 'lucide-react';
 
 const FileList = ({ folderPath, files, selectFolder, refresh }) => {
   const iconsMap = {
-    pdf: '/icons/pdf.png',
-    craftx: '/icons/document.png',
+    pdf: '/icons/pdf-icon.png',
+    craftx: '/icons/file-icon.png',
   };
 
   const [contextMenuOptions, setContextMenuOptions] = useState({});
@@ -93,74 +97,103 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
   return (
     <>
       <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        {
-          routingStack.map((folder,index)=>(<>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-            <BreadcrumbLink className='cursor-pointer' onClick={()=>{
-              setRoutingStack(routingStack.slice(0,index+1));
-            }}>{folder}</BreadcrumbLink>
-            </BreadcrumbItem>
-            </>))
-        }
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              className='cursor-pointer'
+              onClick={(e) => setRoutingStack([])}
+            >
+              Home
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          {routingStack.map((folder, index) => (
+            <>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  className='cursor-pointer'
+                  onClick={() => {
+                    setRoutingStack(routingStack.slice(0, index + 1));
+                  }}
+                >
+                  {folder}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </>
+          ))}
+          <div className='ml-auto mr-3'>
+            <Button
+              variant='outline'
+              className='cursor-pointer'
+              onClick={refresh}
+            >
+              <RefreshCcw />
+              <span className='px-1'>Refresh</span>
+            </Button>
+          </div>
         </BreadcrumbList>
       </Breadcrumb>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className='w-[100px]'>Type</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead>Modified</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {files.map((file, index) => {
-            const fileName = file.name;
-            const ext = fileName.split('.').at(-1);
-            const name =
-              file.name.length > 16
-                ? file.name.substr(0, 16) + '....'
-                : fileName;
-            return (
-              <TableRow
-                key={index}
-                className='cursor-pointer'
-                onContextMenu={(event) => handleContextMenu(event, file)}
-              >
-                <TableCell
-                  className='font-medium'
-                  onClick={(e) => handleListItemClick(file)}
-                >
-                  <img
-                    src={
-                      file.type == 'directory'
-                        ? '/icons/folder.png'
-                        : iconsMap[ext] ?? '/icons/file-icon.svg'
-                    }
-                  />
-                </TableCell>
-                <TableCell onClick={(e) => handleListItemClick(file)}>
-                  {name}
-                </TableCell>
-                <TableCell onClick={(e) => handleListItemClick(file)}>
-                  {file.created_at}
-                </TableCell>
-                <TableCell onClick={(e) => handleListItemClick(file)}>
-                  {file.modified_at}
-                </TableCell>
-                <TableCell onClick={(e) => handleContextMenu(e, file)}>
-                  ...
-                </TableCell>
+      {!files ? (
+        <Loading />
+      ) : files.length > 0 ? (
+        <div className='max-w-sm sm:max-w-full overflow-x-auto'>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className='w-[100px]'>Type</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Modified</TableHead>
               </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+            </TableHeader>
+            <TableBody>
+              {files.map((file, index) => {
+                const fileName = file.name;
+                const ext = fileName.split('.').at(-1);
+                return (
+                  <TableRow
+                    key={index}
+                    className='cursor-pointer'
+                    onContextMenu={(event) => handleContextMenu(event, file)}
+                  >
+                    <TableCell
+                      className='font-medium'
+                      onClick={(e) => handleListItemClick(file)}
+                    >
+                      <img
+                        src={
+                          file.type == 'directory'
+                            ? '/icons/folder-icon.png'
+                            : iconsMap[ext] ?? '/icons/file-icon.svg'
+                        }
+                      />
+                    </TableCell>
+                    <TableCell onClick={(e) => handleListItemClick(file)}>
+                      {fileName}
+                    </TableCell>
+                    <TableCell onClick={(e) => handleListItemClick(file)}>
+                      {file.created_at}
+                    </TableCell>
+                    <TableCell onClick={(e) => handleListItemClick(file)}>
+                      {file.modified_at}
+                    </TableCell>
+                    <TableCell onClick={(e) => handleContextMenu(e, file)}>
+                      ...
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <div className='flex justify-center items-center h-screen'>
+          <div className='mx-auto h-1/2'>
+            <Image src='/icons/empty-box.png' height={125} width={125} />
+            <h4 className='text-center'>Folder is Empty</h4>
+          </div>
+        </div>
+      )}
       <ContextMenu
         options={contextMenuOptions.options}
         position={contextMenuOptions.position || { x: 0, y: 0 }}
