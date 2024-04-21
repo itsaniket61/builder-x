@@ -21,8 +21,12 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          {children}
+          <div className="fixed top-0 z-50">
+            <Navbar />
+          </div>
+          <div className="pt-20">
+            {children}
+          </div>
           <ToastContainer/>
         </ThemeProvider>
       </body>
