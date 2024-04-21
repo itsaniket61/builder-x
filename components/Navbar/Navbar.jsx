@@ -19,15 +19,15 @@ function Navbar() {
     <nav className='px-2 flex bg-white dark:bg-gray-950'>
       <div
         id='logo'
-        className='pr-4 font-semibold text-3xl w-full md:w-1/12 p-2'
+        className='pr-4 font-semibold text-3xl w-full md:w-1/6 p-2'
       >
         <Link href='/'>
           <Image
             src={theme.resolvedTheme ? '/images/DocuFlow-logo-'+theme.resolvedTheme+'.png' : '#'}
-            height={512}
-            width={512}
+            height={1080}
+            width={1080}
             alt='DocuFlow Logo'
-            className='transition-all duration-300 hover:scale-125'
+            className='transition-all duration-300'
           />
         </Link>
       </div>
