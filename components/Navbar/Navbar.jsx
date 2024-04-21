@@ -8,7 +8,8 @@ import { DarkModeToggle } from '../ui/darkmode-toggle';
 import { MobileNavbar } from './MobileNavbar';
 
 function Navbar() {
-  const { setTheme } = useTheme();
+  const theme = useTheme();
+  console.log(theme);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -23,7 +24,7 @@ function Navbar() {
       >
         <Link href='/'>
           <Image
-            src='/images/DocuFlow-logo-light.png'
+            src={theme.resolvedTheme ? '/images/DocuFlow-logo-'+theme.resolvedTheme+'.png' : '#'}
             height={512}
             width={512}
             alt='DocuFlow Logo'
