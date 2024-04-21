@@ -9,7 +9,6 @@ import { MobileNavbar } from './MobileNavbar';
 
 function Navbar() {
   const theme = useTheme();
-  console.log(theme);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {

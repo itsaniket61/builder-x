@@ -97,7 +97,6 @@ export const CloudKeeperUtil = {
   deleteFile: async (uid, filePath)=>{
     filePath = 'BuildersX/' + uid + '/' + filePath;
     const url = AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/file?path=' + filePath;
-    console.log(url);
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -107,7 +106,6 @@ export const CloudKeeperUtil = {
       },
     });
     const json = await response.json();
-    console.log(json);
     if (!response.ok) {
       throw new Error('Failed to delete file');
     }
