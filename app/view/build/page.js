@@ -71,7 +71,7 @@ function Build() {
         <div>
           <Card className='shadow-none border-none sm:shadow-lg sm:border'>
             <CardHeader>
-              <CardTitle>BuildifyX</CardTitle>
+              <CardTitle>DocuFlow</CardTitle>
               <CardDescription>Build Amazing with power of AI</CardDescription>
             </CardHeader>
             <CardContent>

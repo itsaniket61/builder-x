@@ -22,7 +22,7 @@ export function MobileNavbar({ menuItems }) {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>BuildifyX</SheetTitle>
+          <SheetTitle>DocuFlow</SheetTitle>
           <SheetDescription>
             Convert Imagination into something
           </SheetDescription>

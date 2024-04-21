@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "BuilderX",
-  description: "This is the builder for the BuildifyX",
+  description: "This is the builder for the DocuFlow",
 };
 
 export default function RootLayout({ children }) {

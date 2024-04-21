@@ -23,10 +23,10 @@ function Navbar() {
       >
         <Link href='/'>
           <Image
-            src='/images/app.png'
-            height={45}
-            width={45}
-            alt='BuildifyX Logo'
+            src='/images/DocuFlow-logo-light.png'
+            height={512}
+            width={512}
+            alt='DocuFlow Logo'
             className='transition-all duration-300 hover:scale-125'
           />
         </Link>

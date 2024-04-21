@@ -34,7 +34,7 @@ function HeroSection() {
         />
       </div>
       <div className='md:my-24 mx-auto md:w-1/3 justify-center md:order-1 order-2 text-center md:text-start'>
-        <h2 className=' font-bold text-4xl md:text-6xl '>BuildifyX__</h2>
+        <h2 className=' font-bold text-4xl md:text-6xl '>DocuFlow__</h2>
         <p className='mb-8 mt-4  text-2xl tracking-wide'>
           Build with Amaze and Power....
         </p>
