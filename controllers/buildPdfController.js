@@ -6,7 +6,6 @@ export const buildPdfController = async (request)=>{
     try {
         const {craftxFilePath} = await request.json();
         const uid = await request.headers.get('uid');
-        console.log(craftxFilePath);
         const fileame = craftxFilePath.split('/').at(-1).split('.').at(0);
         // Get file
         const craftxBlob = await CloudKeeperUtil.downloadFile(uid,craftxFilePath);

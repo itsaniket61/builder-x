@@ -1,33 +1,33 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../auth/Hooks/useAuth'
-import FolderHierarchy from '@/components/Explorer/FolderHierarchy';
 import FileList from '@/components/Explorer/FileList';
 import { explorerUtil } from './Utils/explorerUtil';
 import Loading from '@/components/Loading/Loading';
 
 function Explorer() {
 
-    useAuth('/view/explorer', '/view/auth');
+    const auth = useAuth('/view/explorer', '/view/auth');
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [folderPath, setFolderPath] = useState(null);
 
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const jsonData = await explorerUtil.getFiles({
-              folderPath: folderPath,
-            });
-            setData(jsonData);
-            setIsLoading(false);
-          } catch (error) {
-            setError(error);
-            setIsLoading(false);
-          }
-        };
+    const fetchData = async () => {
+      try {
+        setData(undefined);
+        const jsonData = await explorerUtil.getFiles({
+          folderPath: folderPath,
+        });
+        setData(jsonData);
+        setIsLoading(false);
+      } catch (error) {
+        setError(error);
+        setIsLoading(false);
+      }
+    };
 
+      useEffect(() => {
         fetchData();
       }, [folderPath]);
     
@@ -39,18 +39,23 @@ function Explorer() {
          return <div>Error: {error.message}</div>;
        }
 
-       const folders = data?.children || [];
-       console.log("Folders: " , folders);
+       const folders = data!=undefined ? data.children : undefined;
        const files = folders;
 
        const handleFolderSelection = (folderPath) => {
         setFolderPath(folderPath);
        };
 
+       const refreshList = async () => {
+        fetchData();
+       }
+
+    if (auth.isLoading) return <Loading/>;
+
     return (
       <div className='flex h-screen'>
         <div className='flex-1 p-2'>
-          <FileList files={files} selectFolder={handleFolderSelection} folderPath={folderPath}/>
+          <FileList files={files} selectFolder={handleFolderSelection} refresh={refreshList} folderPath={folderPath}/>
         </div>
       </div>
     );

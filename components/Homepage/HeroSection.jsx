@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { buttonVariants } from '@/components/ui/button';
 import { AuthUtil } from '@/app/view/auth/Utils/AuthUtil';
 import { useAuth } from '@/app/view/auth/Hooks/useAuth';
+import Loading from '../Loading/Loading';
 
 function HeroSection() {
 
-  useAuth('#','view/auth/');
+  const auth = useAuth('#','view/auth/');
 
   const signout = ()=>{
     AuthUtil.signout().then(()=>{
@@ -19,8 +20,10 @@ function HeroSection() {
     });
   }
 
+  if (auth.isLoading) return <Loading/>;
+
   return (
-    <div className='h-screen w-100 px-4 py-16 bg-dolly-200 flex flex-col md:flex-row flex-wrap align-middle md:justify-start'>
+    <div className='h-screen w-100 px-4 py-16 flex flex-col md:flex-row flex-wrap align-middle md:justify-start'>
       <div className='mx-auto order-1 md:order-2 my-4 w-1/3'>
         <Image
           src='/images/app.png'
@@ -31,7 +34,7 @@ function HeroSection() {
         />
       </div>
       <div className='md:my-24 mx-auto md:w-1/3 justify-center md:order-1 order-2 text-center md:text-start'>
-        <h2 className=' font-bold text-8xl md:text-6xl '>BuildifyX__</h2>
+        <h2 className=' font-bold text-4xl md:text-6xl '>DocuFlow__</h2>
         <p className='mb-8 mt-4  text-2xl tracking-wide'>
           Build with Amaze and Power....
         </p>

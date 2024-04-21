@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Label } from '@radix-ui/react-context-menu';
+import Loading from '@/components/Loading/Loading';
 
 function Auth() {
   const [isSignInScreen, setIsSignInScreen] = useState(true);
@@ -24,7 +25,7 @@ function Auth() {
     password: '',
   });
 
-  useAuth('/', '/view/auth');
+  const auth = useAuth('/', '/view/auth');
 
   const switchAuth = (e) => {
     e.preventDefault();
@@ -52,7 +53,6 @@ function Auth() {
         throw new Error('Somewhere went wrong');
       })
       .catch((err) => {
-        console.log(err);
         showToast(err.message, 'error',{
           position: 'top-center'
         });
@@ -62,22 +62,21 @@ function Auth() {
   useEffect(() => {
     const submitForm = async () => {
       if (isLoading) {
-        console.log(isLoading);
-        console.log('Form is submitting...');
         if (isSignInScreen) {
           await signIn(formData);
         } else {
           await signUp(formData);
         }
-        console.log('Form submitted successfully!');
         setIsLoading(false);
       }
     };
     submitForm();
   }, [isLoading, isSignInScreen]);
 
+  if (auth.isLoading) return <Loading/>;
+
   return (
-    <div className='md:flex items-center justify-center h-screen'>
+    <div className='w-full'>
       <Card className='w-full max-w-sm mx-auto'>
         <CardHeader>
           <CardTitle className='text-2xl'>

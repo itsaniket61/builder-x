@@ -14,9 +14,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
+import Loading from '@/components/Loading/Loading';
 
 function Build() {
-  useAuth('/view/build', '/view/auth');
+  const auth = useAuth('/view/build', '/view/auth');
 
   const toastId = useRef(null);
   const notify = () => (toastId.current = toast('Building...', { autoClose: false }));
@@ -62,13 +63,15 @@ function Build() {
     build();
   }, [isLoading]);
 
+  if(auth.isLoading) return <Loading/>
+
   return (
-    <div className='bg-dolly-200 h-screen'>
-      <div className='p-10'>
-        <div className='container'>
-          <Card>
+    <div className='h-screen'>
+      <div className='sm:p-10'>
+        <div>
+          <Card className='shadow-none border-none sm:shadow-lg sm:border'>
             <CardHeader>
-              <CardTitle>BuildifyX</CardTitle>
+              <CardTitle>DocuFlow</CardTitle>
               <CardDescription>Build Amazing with power of AI</CardDescription>
             </CardHeader>
             <CardContent>
