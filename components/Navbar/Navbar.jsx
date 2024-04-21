@@ -17,7 +17,7 @@ function Navbar() {
   };
 
   return (
-    <nav className='px-2 flex'>
+    <nav className='px-2 flex bg-white dark:bg-gray-950'>
       <div
         id='logo'
         className='pr-4 font-semibold text-3xl w-full md:w-1/12 p-2'
