@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "BuilderX",
+  title: "DocuFlow",
   description: "This is the builder for the DocuFlow",
 };
 
@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
           <div className="fixed top-0 z-50">
             <Navbar />
           </div>
-          <div className="pt-16 sm:pt-12">
+          <div className="pt-16 sm:pt-14">
             {children}
           </div>
           <ToastContainer/>
