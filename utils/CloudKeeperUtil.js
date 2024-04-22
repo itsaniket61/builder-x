@@ -69,10 +69,11 @@ export const CloudKeeperUtil = {
     return blob;
   },
   listAllFiles: async (uid, folderName)=>{
+    const pathStarter = 'BuildersX/' + uid;
     if(folderName){
-      folderName = 'BuildersX/' + uid + '/' + folderName;
+      folderName = pathStarter + '/' + folderName;
     }else{
-      folderName = 'BuildersX/' + uid;
+      folderName = pathStarter;
     }
     const url =
       AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/folder?folderName=' + folderName;
@@ -90,7 +91,11 @@ export const CloudKeeperUtil = {
     }
 
     const responseBody = await response.json();
-    const files = responseBody.response;
+    let files = responseBody.response;
+    files.name = files.name.replace(pathStarter, '');
+    for(let i = 0; i < files.children.length; i++){
+      files.children[i].name = files.children[i].name.replace(pathStarter, '');
+    }
     if (!files) throw new Error('Failed to list files');
     return files;
   },
