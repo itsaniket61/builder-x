@@ -26,7 +26,6 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
 
   useEffect(() => {
     selectFolder(routingStack.join('/'));
-    console.log('Routing changed');
   }, [routingStack]);
 
   const handleListItemClick = async (file) => {
@@ -41,13 +40,11 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       {
         label: 'Rename',
         action: async () => {
-          console.log('Downloading file:', file);
         },
       },
       {
         label: 'Delete',
         action: () => {
-          console.log('Deleting file:', file);
         },
       },
     ];
@@ -56,7 +53,6 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       {
         label: 'Rename',
         action: async () => {
-          console.log('Downloading file:', file);
         },
       },
       {
@@ -71,7 +67,6 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       {
         label: 'Delete',
         action: async () => {
-          console.log('Deleting file:', file);
           await explorerUtil.deleteFile({
             filePath: routingStack.join('/') + '/' + file.name,
           });
@@ -136,7 +131,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       {!files ? (
         <Loading />
       ) : files.length > 0 ? (
-        <div className='max-w-sm sm:max-w-full overflow-x-auto'>
+        <div className='w-screen overflow-x-auto'>
           <Table>
             <TableHeader>
               <TableRow>
