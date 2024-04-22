@@ -29,3 +29,16 @@ jobs:
       run: |
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/builderx:latest
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/builderx:$(date +%Y-%m-%d)
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@3.110.44.202 'echo "Deployed"'
