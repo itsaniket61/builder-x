@@ -7,6 +7,7 @@ const { default: builderService } = require('@/services/builderService');
 export const saveController = async (request) => {
   try {
     let body = await request.json();
+    const uid = await request.headers.get('userid');
     let { markup, style, data, folderPath, outputFileName, prompt, craftxPath } =
       body;
 
@@ -43,7 +44,6 @@ export const saveController = async (request) => {
       data = newData;
       outputFileName = outputFileName + '_' + Date.now().toString();
     }
-    const uid = await request.headers.get('userid');
     const { response } = await builderService.save({
       markup,
       style,
