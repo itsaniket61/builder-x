@@ -11,6 +11,7 @@ export const saveController = async (request) => {
       body;
 
       if(craftxPath) {
+        console.log("Creating PDF from " + craftxPath);
         const craftxBlob = await CloudKeeperUtil.downloadFile(uid, craftxPath);
         const pdfBlob = await CrafterUtil.buildPdf(craftxBlob);
         await CloudKeeperUtil.uploadFile(await pdfBlob.arrayBuffer(), uid, {
@@ -65,6 +66,7 @@ export const saveController = async (request) => {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error(error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
