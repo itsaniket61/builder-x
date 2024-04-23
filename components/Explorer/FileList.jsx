@@ -81,11 +81,19 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       fileMenuOptions.push({
         label: 'Build PDF',
         action: async () => {
-          const fileName = file.name.split('.')[0];
-          const path = routingStack.join('/');
-          await buildUtil.buildWithCraftx({folderPath:path, outputFileName: fileName+'.pdf', craftxPath: path+'/'+file.name});
-          refresh();
-          showToast('File deleted successfully');
+          try {
+            const fileName = file.name.split('.')[0];
+            const path = routingStack.join('/');
+            await buildUtil.buildWithCraftx({
+              folderPath: path,
+              outputFileName: fileName,
+              craftxPath: path + '/' + file.name,
+            });
+            refresh();
+            showToast('File deleted successfully');
+          } catch (error) {
+            showToast('Failed to build PDF', 'error');
+          }
         },
       });
     }

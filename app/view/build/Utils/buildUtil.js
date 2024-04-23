@@ -32,7 +32,6 @@ export const buildUtil = {
       const res = await req.json();
       return res;
     }
-    const res = await req.json();
-    throw new Error(res.error);
+    throw new Error("Failed to Build PDF from CRAFTX");
   },
 };
