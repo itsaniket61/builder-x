@@ -14,6 +14,7 @@ import Image from 'next/image';
 import Loading from '../Loading/Loading';
 import { Button } from '../ui/button';
 import { RefreshCcw } from 'lucide-react';
+import { buildUtil } from '@/app/view/build/Utils/buildUtil';
 
 const FileList = ({ folderPath, files, selectFolder, refresh }) => {
   const iconsMap = {
@@ -36,6 +37,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
 
   const handleContextMenu = (event, file) => {
     event.preventDefault();
+    const fileExtension = file.name.split('.').at(-1);
     const folderMenuOptions = [
       {
         label: 'Rename',
@@ -49,7 +51,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       },
     ];
 
-    const fileMenuOptions = [
+    let fileMenuOptions = [
       {
         label: 'Rename',
         action: async () => {
@@ -75,6 +77,18 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
         },
       },
     ];
+    if(fileExtension=='craftx'){
+      fileMenuOptions.push({
+        label: 'Build PDF',
+        action: async () => {
+          const fileName = file.name.split('.')[0];
+          const path = routingStack.join('/') + '/';
+          await buildUtil.buildWithCraftx({folderPath:path, outputFileName: fileName+'.pdf', craftxPath: path+file.name});
+          refresh();
+          showToast('File deleted successfully');
+        },
+      });
+    }
     if (file.type === 'directory') {
       setContextMenuOptions({
         options: folderMenuOptions,

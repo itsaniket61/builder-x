@@ -23,7 +23,7 @@ function Navbar() {
       >
         <Link href='/'>
           <Image
-            src={theme.resolvedTheme ? '/images/DocuFlow-logo-'+theme.resolvedTheme+'.png' : '#'}
+            src={theme.resolvedTheme && '/images/DocuFlow-logo-'+theme.resolvedTheme+'.png' }
             height={1080}
             width={1080}
             alt='DocuFlow Logo'

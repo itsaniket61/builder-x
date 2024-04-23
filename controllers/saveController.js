@@ -7,8 +7,28 @@ const { default: builderService } = require('@/services/builderService');
 export const saveController = async (request) => {
   try {
     let body = await request.json();
-    let { markup, style, data, folderPath, outputFileName, prompt } =
+    let { markup, style, data, folderPath, outputFileName, prompt, craftxPath } =
       body;
+
+      if(craftxPath) {
+        const craftxBlob = await CloudKeeperUtil.downloadFile(uid, craftxPath);
+        const pdfBlob = await CrafterUtil.buildPdf(craftxBlob);
+        await CloudKeeperUtil.uploadFile(await pdfBlob.arrayBuffer(), uid, {
+          folderPath,
+          fileName: outputFileName + '.pdf',
+          type: 'application/pdf',
+        });
+        await CloudKeeperUtil.uploadFile(await pdfBlob.arrayBuffer(), uid, {
+          folderPath,
+          fileName: outputFileName + '.pdf',
+          type: 'application/pdf',
+        });
+        return NextResponse.json(
+          { message: 'PDF Build Successful' },
+          { status: 200 }
+        );
+      }
+
     if (prompt) {
       console.log('Building with Artificial Intelligence....');
       const {
