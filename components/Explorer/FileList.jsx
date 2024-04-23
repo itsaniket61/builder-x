@@ -82,8 +82,8 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
         label: 'Build PDF',
         action: async () => {
           const fileName = file.name.split('.')[0];
-          const path = routingStack.join('/') + '/';
-          await buildUtil.buildWithCraftx({folderPath:path, outputFileName: fileName+'.pdf', craftxPath: path+file.name});
+          const path = routingStack.join('/');
+          await buildUtil.buildWithCraftx({folderPath:path, outputFileName: fileName+'.pdf', craftxPath: path+'/'+file.name});
           refresh();
           showToast('File deleted successfully');
         },
