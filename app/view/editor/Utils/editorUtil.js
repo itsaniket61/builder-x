@@ -15,14 +15,16 @@ export const editorUtil = {
     const res = await req.json();
     throw new Error(res.error);
   },
-  save: async ({markup, style, data, filePath }) =>{
-    if(!markup || !style || !data || !filePath){
-      throw new Error("Missing required parameters");
+  save: async ({ markup, style, data, filePath }) => {
+    if (!markup || !style || !data || !filePath) {
+      throw new Error('Missing required parameters');
     }
 
     const lastSeparatorIndex = filePath.lastIndexOf('/');
     const folderPath = filePath.substring(0, lastSeparatorIndex);
-    const outputFileNameParts = filePath.substring(lastSeparatorIndex + 1).split('.');
+    const outputFileNameParts = filePath
+      .substring(lastSeparatorIndex + 1)
+      .split('.');
 
     if (outputFileNameParts[1] !== 'craftx')
       throw new Error('Invalid file extension');
@@ -46,14 +48,14 @@ export const editorUtil = {
     const res = await req.json();
     throw new Error(res.error);
   },
-  preview: async ({markup, style, data}) => {
+  preview: async ({ markup, style, data }) => {
     const url = '/gateway/api/builder/v1/create';
     const options = {
       method: 'POST',
       body: JSON.stringify({
-        markup: markup??"",
-        style: style??"",
-        data: data??"",
+        markup: markup ?? '',
+        style: style ?? '',
+        data: data ?? '',
         pdfOutput: true,
       }),
     };
@@ -72,5 +74,11 @@ export const editorUtil = {
       const res = await req.json();
       throw new Error(res.error);
     }
-  }
+  },
+  formatJson: (jsonString) => {
+    return jsonString
+      .replace(/({|}|\[|\])/g, '$1\n')
+      .replace(/(,)/g, '$1\n')
+      .replace(/([^\{\}\[\],\n]+:)/g, '\t$1');
+  },
 };

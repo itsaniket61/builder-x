@@ -7,6 +7,16 @@ import { useSearchParams } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { showToast } from '@/components/Toast/Toast';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Eye } from 'lucide-react';
 
 function Editor() {
   const params = useSearchParams();
@@ -42,21 +52,53 @@ function Editor() {
       console.log(parsedCraftx);
       setMarkup(parsedCraftx.ejsContent??'');
       setStyle(parsedCraftx.style??'*{}');
-      setData(JSON.stringify(parsedCraftx.data??''));
+      setData(JSON.stringify(parsedCraftx.data ?? ''));
     };
     parseCraftx(craftxFile);
   }, []);
 
+  const side = "bottom";
   return (
-    <div className='h-screen'>
+    <div className='h-1/2'>
       <div className='flex border'>
-        <div className='w-1/2 border'>
+        <div className='w-min p-2'>
+          <Sheet key={side}>
+            <SheetTrigger asChild>
+              <Button variant='outline'>
+                <Eye />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side={side} className='h-screen'>
+              <SheetHeader>
+                <SheetTitle>{craftxFile || 'Loading....'}</SheetTitle>
+                <SheetFooter className='float-start'>
+                  <SheetClose asChild className='my-2 md:my-0'>
+                    <Button onClick={save} variant='outline' className='mx-2'>
+                      Save
+                    </Button>
+                  </SheetClose>
+                  <Button onClick={preview} variant='outline' className='mx-2'>
+                    Preview
+                  </Button>
+                </SheetFooter>
+              </SheetHeader>
+              <div className='p-1 h-screen overflow-scroll'>
+                {previewUrl && (
+                  <iframe src={previewUrl} className='w-full h-full' />
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+        <div className='w-full border'>
           <Tabs defaultValue='markup' className='w-full'>
-            <TabsList>
-              <TabsTrigger value='markup'>MARKUP</TabsTrigger>
-              <TabsTrigger value='style'>STYLE</TabsTrigger>
-              <TabsTrigger value='data'>DATA</TabsTrigger>
-            </TabsList>
+            <div className='p-1'>
+              <TabsList className='w-full md:w-min'>
+                <TabsTrigger value='markup'>MARKUP</TabsTrigger>
+                <TabsTrigger value='style'>STYLE</TabsTrigger>
+                <TabsTrigger value='data'>DATA</TabsTrigger>
+              </TabsList>
+            </div>
             <TabsContent value='markup'>
               <Textarea
                 className='h-screen'
@@ -79,15 +121,6 @@ function Editor() {
               />
             </TabsContent>
           </Tabs>
-        </div>
-        <div className='w-1/2 p-2'>
-          <Button onClick={save} variant='outline' className='mx-2'>
-            Save
-          </Button>
-          <Button onClick={preview} variant='outline' className='mx-2'>
-            Preview
-          </Button>
-          {previewUrl && <iframe src={previewUrl} className='w-full h-full' />}
         </div>
       </div>
     </div>

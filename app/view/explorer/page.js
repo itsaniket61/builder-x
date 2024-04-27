@@ -32,7 +32,11 @@ function Explorer() {
       }, [folderPath]);
     
        if (isLoading) {
-         return <Loading/>;
+         return (
+           <div class='flex justify-center items-center h-full'>
+             <Loading />
+           </div>
+         );
        }
 
        if (error) {
@@ -50,7 +54,11 @@ function Explorer() {
         fetchData();
        }
 
-    if (auth.isLoading) return <Loading/>;
+    if (auth.isLoading) return (
+      <div class='flex justify-center items-center h-full'>
+        <Loading />
+      </div>
+    );
 
     return (
       <div className='flex h-screen'>
