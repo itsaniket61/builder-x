@@ -9,17 +9,12 @@ import { MobileNavbar } from './MobileNavbar';
 
 function Navbar() {
   const theme = useTheme();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
 
   return (
-    <nav className='px-2 flex'>
+    <nav className='px-2 flex bg-card'>
       <div
         id='logo'
-        className='pr-4 font-semibold text-3xl p-2'
+        className='py-3 px-2 font-semibold h-10'
       >
         <Link href='/'>
           <Image
