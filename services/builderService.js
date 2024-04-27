@@ -1,4 +1,5 @@
 import { CloudKeeperUtil } from '@/utils/CloudKeeperUtil';
+import { CrafterUtil } from '@/utils/CrafterUtil';
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const fs = require('fs');
@@ -55,6 +56,7 @@ const save = async ({
   uid,
   folderPath,
   outputFileName,
+  isTemplate
 }) => {
   try {
     // Generate the zip file using the create function
@@ -62,8 +64,9 @@ const save = async ({
     // Call the asynchronous uploadFile function to upload the generated zip file
     const uploadFile = await CloudKeeperUtil.uploadFile(buffer, uid, {
       folderPath,
-      fileName: outputFileName+'.craftx',
+      fileName: outputFileName + '.craftx',
       type: 'application/octet-stream',
+      customMetadata: isTemplate ? { isTemplate } : undefined,
     });
 
     if (!uploadFile) throw new Error('Error uploading file');
@@ -104,6 +107,18 @@ const buildWithAi = async(prompt)=>{
   }
 }
 
-const builderService = {create, save, buildWithAi}
+const buildPDF = async ({ markup, style, data }) => {
+  try {
+    // Generate the zip file using the create function
+    const buffer = await create({ markup, style, data });
+    // Call the asynchronous uploadFile function to upload the generated zip file
+    return await CrafterUtil.buildPdf(buffer);
+  } catch (error) {
+    console.error('Error saving file:', error);
+    throw error; // Re-throw the error to propagate it further
+  }
+}
+
+const builderService = {create, save, buildWithAi, buildPDF}
 
 export default builderService;

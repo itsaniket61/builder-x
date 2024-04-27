@@ -7,6 +7,7 @@ export const buildUtil = {
         folderPath: folderPath,
         outputFileName: outputFileName,
         prompt: prompt,
+        isTemplate: true
       }),
     };
     const req = await fetch(url, options);

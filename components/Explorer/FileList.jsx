@@ -15,8 +15,11 @@ import Loading from '../Loading/Loading';
 import { Button } from '../ui/button';
 import { RefreshCcw } from 'lucide-react';
 import { buildUtil } from '@/app/view/build/Utils/buildUtil';
+import { useRouter } from 'next/navigation';
 
 const FileList = ({ folderPath, files, selectFolder, refresh }) => {
+  const router = useRouter();
+  
   const iconsMap = {
     pdf: '/icons/pdf-icon.png',
     craftx: '/icons/file-icon.png',
@@ -41,21 +44,18 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
     const folderMenuOptions = [
       {
         label: 'Rename',
-        action: async () => {
-        },
+        action: async () => {},
       },
       {
         label: 'Delete',
-        action: () => {
-        },
+        action: () => {},
       },
     ];
 
     let fileMenuOptions = [
       {
         label: 'Rename',
-        action: async () => {
-        },
+        action: async () => {},
       },
       {
         label: 'Download',
@@ -77,7 +77,23 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
         },
       },
     ];
-    if(fileExtension=='craftx'){
+
+    //Added Edit Option
+    fileMenuOptions.push({
+      label: 'Edit',
+      action: async () => {
+        try {
+          const fileName = file.name;
+          const path = routingStack.join('/');
+          router.push('/view/editor?craftx=' + path + '/' + fileName);
+        } catch (error) {
+          showToast('Failed to build PDF', 'error');
+        }
+      },
+    });
+
+    if (fileExtension == 'craftx') {
+      //Added Build PDF Option
       fileMenuOptions.push({
         label: 'Build PDF',
         action: async () => {
@@ -90,7 +106,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
               craftxPath: path + '/' + file.name,
             });
             refresh();
-            showToast('File deleted successfully');
+            showToast('PDF built successfully');
           } catch (error) {
             showToast('Failed to build PDF', 'error');
           }
@@ -161,6 +177,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
                 <TableHead>Name</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Modified</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

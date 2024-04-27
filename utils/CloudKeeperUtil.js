@@ -1,7 +1,7 @@
 import { AppConstants } from '@/Constants/AppConstants';
 
 export const CloudKeeperUtil = {
-  uploadFile: async (buffer, uid, { folderPath, fileName, type }) => {
+  uploadFile: async (buffer, uid, { folderPath, fileName, type, customMetadata }) => {
     const blob = new Blob([buffer], {
       type: type,
     });
@@ -11,6 +11,10 @@ export const CloudKeeperUtil = {
     const formData = new FormData();
     formData.append('file', blob, fileName );
     formData.append('folderName', folderName);
+    
+    if(customMetadata){
+      formData.append('customMetadata', JSON.stringify(customMetadata));
+    }
 
     const response = await fetch(url, {
       method: 'POST',

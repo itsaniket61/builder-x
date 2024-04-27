@@ -8,7 +8,7 @@ export const saveController = async (request) => {
   try {
     let body = await request.json();
     const uid = await request.headers.get('userid');
-    let { markup, style, data, folderPath, outputFileName, prompt, craftxPath } =
+    let { markup, style, data, folderPath, outputFileName, prompt, craftxPath, isTemplate } =
       body;
 
       if(craftxPath) {
@@ -51,6 +51,7 @@ export const saveController = async (request) => {
       uid,
       folderPath,
       outputFileName,
+      isTemplate
     });
     if (prompt) {
       const craftxBlob = await CloudKeeperUtil.downloadFile(uid, response);
