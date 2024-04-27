@@ -1,7 +1,7 @@
 import { AppConstants } from '@/Constants/AppConstants';
 
 export const CloudKeeperUtil = {
-  uploadFile: async (buffer, uid, { folderPath, fileName, type }) => {
+  uploadFile: async (buffer, uid, { folderPath, fileName, type, customMetadata }) => {
     const blob = new Blob([buffer], {
       type: type,
     });
@@ -11,6 +11,10 @@ export const CloudKeeperUtil = {
     const formData = new FormData();
     formData.append('file', blob, fileName );
     formData.append('folderName', folderName);
+    
+    if(customMetadata){
+      formData.append('customMetadata', JSON.stringify(customMetadata));
+    }
 
     const response = await fetch(url, {
       method: 'POST',
@@ -69,10 +73,11 @@ export const CloudKeeperUtil = {
     return blob;
   },
   listAllFiles: async (uid, folderName)=>{
+    const pathStarter = 'BuildersX/' + uid;
     if(folderName){
-      folderName = 'BuildersX/' + uid + '/' + folderName;
+      folderName = pathStarter + '/' + folderName;
     }else{
-      folderName = 'BuildersX/' + uid;
+      folderName = pathStarter;
     }
     const url =
       AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/folder?folderName=' + folderName;
@@ -90,7 +95,11 @@ export const CloudKeeperUtil = {
     }
 
     const responseBody = await response.json();
-    const files = responseBody.response;
+    let files = responseBody.response;
+    files.name = files.name.replace(pathStarter, '');
+    for(let i = 0; i < files.children.length; i++){
+      files.children[i].name = files.children[i].name.replace(pathStarter, '');
+    }
     if (!files) throw new Error('Failed to list files');
     return files;
   },

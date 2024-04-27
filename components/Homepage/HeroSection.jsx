@@ -20,7 +20,11 @@ function HeroSection() {
     });
   }
 
-  if (auth.isLoading) return <Loading/>;
+  if (auth.isLoading) return (
+    <div class='flex justify-center items-center h-full'>
+      <Loading />
+    </div>
+  );
 
   return (
     <div className='h-screen w-100 px-4 py-16 flex flex-col md:flex-row flex-wrap align-middle md:justify-start'>

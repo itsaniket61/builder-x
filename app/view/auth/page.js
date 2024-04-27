@@ -33,6 +33,7 @@ function Auth() {
   };
 
   const signIn = async ({ email, password }) => {
+    setIsLoading(true);
     AuthUtil.signIn(email, password)
       .then(({ token }) => {
         window.location.reload();
@@ -41,10 +42,11 @@ function Auth() {
         showToast(err.message, 'error', {
           position: 'top-center',
         });
-      });
+      }).finally(() => setIsLoading(false));
   };
 
   const signUp = async ({ name, email, password }) => {
+    setIsLoading(true);
     AuthUtil.signUp(name, email, password)
       .then((res) => {
         if (res) {
@@ -53,10 +55,11 @@ function Auth() {
         throw new Error('Somewhere went wrong');
       })
       .catch((err) => {
-        showToast(err.message, 'error',{
-          position: 'top-center'
+        showToast(err.message, 'error', {
+          position: 'top-center',
         });
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {
@@ -67,13 +70,16 @@ function Auth() {
         } else {
           await signUp(formData);
         }
-        setIsLoading(false);
       }
     };
     submitForm();
   }, [isLoading, isSignInScreen]);
 
-  if (auth.isLoading) return <Loading/>;
+  if (auth.isLoading) return (
+    <div class='flex justify-center items-center h-full'>
+      <Loading />
+    </div>
+  );
 
   return (
     <div className='w-full'>
@@ -135,22 +141,30 @@ function Auth() {
             </div>
           </form>
         </CardContent>
-        <CardFooter>
-          <Button
-            className='w-full mr-1'
-            onClick={(e) => {
-              e.preventDefault();
-              setIsLoading(true);
-            }}
-          >
-            {isSignInScreen ? 'Sign In' : 'Sign Up'}
-          </Button>
-          <Button variant='outline' onClick={switchAuth}>
-            {isSignInScreen
-              ? 'Create New Account'
-              : 'Already have a new account.'}
-          </Button>
-        </CardFooter>
+        {isLoading ? (
+          <div className='w-full'>
+            <div className='w-min mx-auto'>
+              <Loading />
+            </div>
+          </div>
+        ) : (
+          <CardFooter>
+            <Button
+              className='w-full mr-1'
+              onClick={(e) => {
+                e.preventDefault();
+                setIsLoading(true);
+              }}
+            >
+              {isSignInScreen ? 'Sign In' : 'Sign Up'}
+            </Button>
+            <Button variant='outline' onClick={switchAuth}>
+              {isSignInScreen
+                ? 'Create New Account'
+                : 'Already have a new account.'}
+            </Button>
+          </CardFooter>
+        )}
       </Card>
     </div>
   );

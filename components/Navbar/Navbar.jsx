@@ -1,34 +1,43 @@
 'use client';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import menuItems from '../../ui-data/navbar.json';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { DarkModeToggle } from '../ui/darkmode-toggle';
 import { MobileNavbar } from './MobileNavbar';
+import Loading from '../Loading/Loading';
+import { Skeleton } from '../ui/skeleton';
 
 function Navbar() {
   const theme = useTheme();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [logo, setLogo] = useState(undefined);
+    
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+
+  useEffect(() => {
+    setLogo(theme.resolvedTheme)
+  },[theme])
+  
+
 
   return (
-    <nav className='px-2 flex bg-white dark:bg-gray-950'>
-      <div
-        id='logo'
-        className='pr-4 font-semibold text-3xl w-full md:w-1/6 p-2'
-      >
+    <nav className='px-2 flex bg-card w-screen'>
+      <div id='logo' className='py-3 px-2 font-semibold h-a10'>
         <Link href='/'>
-          <Image
-            src={theme.resolvedTheme ? '/images/DocuFlow-logo-'+theme.resolvedTheme+'.png' : '#'}
-            height={1080}
-            width={1080}
-            alt='DocuFlow Logo'
-            className='transition-all duration-300'
-          />
+          {!logo ? (
+            <Skeleton className='w-[100px] h-[30px] rounded' />
+          ) : (
+            <Image
+              src={
+                theme.resolvedTheme && '/images/DocuFlow-logo-' + logo + '.png'
+              }
+              height={120}
+              width={120}
+              alt='DocuFlow Logo'
+              className='transition-all duration-300'
+            />
+          )}
         </Link>
       </div>
       <div id='menu' className='md:flex-grow flex'>
@@ -43,10 +52,12 @@ function Navbar() {
             ))}
           </ul>
         </div>
+      </div>
+      <div className='flex w-fit ml-auto mr-1'>
         <div className='m-1'>
           <DarkModeToggle />
         </div>
-        <div className='md:hidden flex'>
+        <div className='md:hidden'>
           <MobileNavbar menuItems={menuItems} />
         </div>
       </div>

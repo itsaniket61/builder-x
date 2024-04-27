@@ -63,7 +63,11 @@ function Build() {
     build();
   }, [isLoading]);
 
-  if(auth.isLoading) return <Loading/>
+  if(auth.isLoading) return (
+    <div class='flex justify-center items-center h-full'>
+      <Loading />
+    </div>
+  );
 
   return (
     <div className='h-screen'>
