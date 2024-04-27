@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import ContextMenu from '../ui/context-menu';
-import { showToast } from '../Toast/Toast';
+import { processWithToast, showToast } from '../Toast/Toast';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -69,11 +69,17 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       {
         label: 'Delete',
         action: async () => {
-          await explorerUtil.deleteFile({
-            filePath: routingStack.join('/') + '/' + file.name,
-          });
-          refresh();
-          showToast('File deleted successfully');
+          processWithToast(
+            {
+              startMessage: 'Deleting file...',
+              successMessage: 'File deleted successfully',
+              failureMessage: 'Failed to delete file',
+            },
+            explorerUtil.deleteFile({
+              filePath: routingStack.join('/') + '/' + file.name,
+            }).then(()=>
+          refresh())
+          );
         },
       },
     ];
@@ -136,7 +142,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
 
   return (
     <>
-       <Breadcrumb>
+      <Breadcrumb className='fixed w-full bg-card z-50 pl-4'>
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink
@@ -163,50 +169,53 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
           ))}
           <div className='ml-auto mr-3'>
             <Button
+              size='icon'
               variant='outline'
               className='cursor-pointer'
               onClick={refresh}
             >
-              <RefreshCcw />
-              <span className='px-1'>Refresh</span>
+              <RefreshCcw className={!files && 'animate-spin'}/>
             </Button>
           </div>
         </BreadcrumbList>
       </Breadcrumb>
-        <div className='w-screen overflow-x-auto'>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className='w-[100px]'>Type</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Modified</TableHead>
-              </TableRow>
-            </TableHeader>
-            {!files ?
-            Array(10).fill(0).map((e,index)=>{
-              return (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton className='h-12 w-12 rounded-full' />
-                  </TableCell>
-                  <TableCell>
-                    <div className='flex'>
-                      <span className='hover:text-primary w-full'>
-                        <Skeleton className='h-4 w-[250px] my-1' />
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-[250px] my-1' />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-[250px] my-1' />
-                  </TableCell>
-                </TableRow>
-              );
-            })
-            : <TableBody>
+      <div className='w-screen mt-10'>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className='w-[100px]'>Type</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Modified</TableHead>
+            </TableRow>
+          </TableHeader>
+          {!files ? (
+            Array(10)
+              .fill(0)
+              .map((e, index) => {
+                return (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton className='h-12 w-12 rounded-full' />
+                    </TableCell>
+                    <TableCell>
+                      <div className='flex'>
+                        <span className='hover:text-primary w-full'>
+                          <Skeleton className='h-4 w-[250px] my-1' />
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='h-4 w-[250px] my-1' />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='h-4 w-[250px] my-1' />
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+          ) : (
+            <TableBody>
               {files.map((file, index) => {
                 const fileName = file.name;
                 const ext = fileName.split('.').at(-1);
@@ -236,7 +245,10 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
                         >
                           {fileName}
                         </span>
-                        <span className='w-min' onClick={(e) => handleContextMenu(e, file)}>
+                        <span
+                          className='w-min'
+                          onClick={(e) => handleContextMenu(e, file)}
+                        >
                           <EllipsisVertical className='hover:text-primary inline float-right text-xs text-gray-500' />
                         </span>
                       </div>
@@ -250,9 +262,10 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
                   </TableRow>
                 );
               })}
-            </TableBody>}
-          </Table>
-        </div>
+            </TableBody>
+          )}
+        </Table>
+      </div>
       <ContextMenu
         options={contextMenuOptions.options}
         position={contextMenuOptions.position || { x: 0, y: 0 }}

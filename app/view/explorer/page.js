@@ -33,7 +33,7 @@ function Explorer() {
     
        if (isLoading) {
          return (
-           <div class='flex justify-center items-center h-full'>
+           <div class='flex justify-center items-center h-screen'>
              <Loading />
            </div>
          );
@@ -55,14 +55,14 @@ function Explorer() {
        }
 
     if (auth.isLoading) return (
-      <div class='flex justify-center items-center h-full'>
+      <div class='flex justify-center items-center h-screen'>
         <Loading />
       </div>
     );
 
     return (
       <div className='flex h-screen'>
-        <div className='flex-1 p-2'>
+        <div className='mt-12'>
           <FileList files={files} selectFolder={handleFolderSelection} refresh={refreshList} folderPath={folderPath}/>
         </div>
       </div>

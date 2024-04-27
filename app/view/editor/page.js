@@ -6,7 +6,7 @@ import { editorUtil } from './Utils/editorUtil';
 import { useSearchParams } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { showToast } from '@/components/Toast/Toast';
+import { processWithToast, showToast, statusToast } from '@/components/Toast/Toast';
 import {
   Sheet,
   SheetClose,
@@ -37,13 +37,14 @@ function Editor() {
   };
 
   const save = async () => {
-    try {
-      const save = await editorUtil.save({ markup, style, data, filePath:craftxFile });
-      showToast('Saved Successfully');
-    } catch (error) {
-      console.error(error);
-      showToast(error, 'error');
-    }
+    processWithToast(
+      {
+        startMessage: 'Saving file...',
+        successMessage: 'File saved successfully',
+        failureMessage: 'Failed to save file',
+      },
+      editorUtil.save({ markup, style, data, filePath: craftxFile })
+    );
   };
 
   useEffect(() => {
@@ -59,7 +60,7 @@ function Editor() {
 
   const side = "bottom";
   return (
-    <div className='h-1/2'>
+    <div className='h-1/2 mt-14'>
       <div className='flex border'>
         <div className='w-min p-2'>
           <Sheet key={side}>

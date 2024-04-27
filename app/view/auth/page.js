@@ -76,13 +76,13 @@ function Auth() {
   }, [isLoading, isSignInScreen]);
 
   if (auth.isLoading) return (
-    <div class='flex justify-center items-center h-full'>
+    <div class='flex justify-center items-center h-screen'>
       <Loading />
     </div>
   );
 
   return (
-    <div className='w-full'>
+    <div className='w-full mt-14'>
       <Card className='w-full max-w-sm mx-auto'>
         <CardHeader>
           <CardTitle className='text-2xl'>
