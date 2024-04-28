@@ -55,8 +55,7 @@ const save = async ({
   data,
   uid,
   folderPath,
-  outputFileName,
-  isTemplate
+  outputFileName
 }) => {
   try {
     // Generate the zip file using the create function
@@ -65,8 +64,7 @@ const save = async ({
     const uploadFile = await CloudKeeperUtil.uploadFile(buffer, uid, {
       folderPath,
       fileName: outputFileName + '.craftx',
-      type: 'application/octet-stream',
-      customMetadata: isTemplate ? { isTemplate } : undefined,
+      type: 'application/octet-stream'
     });
 
     if (!uploadFile) throw new Error('Error uploading file');

@@ -16,8 +16,9 @@ import { EllipsisVertical, RefreshCcw } from 'lucide-react';
 import { buildUtil } from '@/app/view/build/Utils/buildUtil';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '../ui/skeleton';
+import { templateUtil } from '@/app/view/explorer/templates/Utils/templateUtil';
 
-const FileList = ({ folderPath, files, selectFolder, refresh }) => {
+const FileList = ({ folderPath, files, selectFolder, refresh, isTemplatesList }) => {
   const router = useRouter();
   
   const iconsMap = {
@@ -41,6 +42,32 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
   const handleContextMenu = (event, file) => {
     event.preventDefault();
     const fileExtension = file.name.split('.').at(-1);
+    
+    const templateMenuOptions = [
+      {
+        label: 'Clone',
+        action: async () => {
+          const folderPath = prompt("Enter folder path");
+          const fileName = prompt("Enter file name");
+            processWithToast({
+              startMessage: 'Cloning...',
+              successMessage: 'File cloned successfully',
+              failureMessage: 'Failed to clone file',
+            },
+              templateUtil.cloneTemplate({
+                folderPath: folderPath,
+                outputFileName: fileName,
+                cloneTemplate: file.name,
+              })
+            );
+        },
+      },
+      {
+        label: 'Add to Favorites',
+        action: () => {},
+      },
+    ];
+    
     const folderMenuOptions = [
       {
         label: 'Rename',
@@ -124,6 +151,11 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
         options: folderMenuOptions,
         position: { x: event.clientX, y: event.clientY },
       });
+    } else if (isTemplatesList) {
+      setContextMenuOptions({
+        options: templateMenuOptions,
+        position: { x: event.clientX, y: event.clientY },
+      })
     } else {
       setContextMenuOptions({
         options: fileMenuOptions,

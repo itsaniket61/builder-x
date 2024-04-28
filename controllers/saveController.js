@@ -1,3 +1,4 @@
+import { AppConstants } from '@/Constants/AppConstants';
 import { CloudKeeperUtil } from '@/utils/CloudKeeperUtil';
 import { CrafterUtil } from '@/utils/CrafterUtil';
 import { NextResponse } from 'next/server';
@@ -8,8 +9,19 @@ export const saveController = async (request) => {
   try {
     let body = await request.json();
     const uid = await request.headers.get('userid');
-    let { markup, style, data, folderPath, outputFileName, prompt, craftxPath, isTemplate } =
+    let { markup, style, data, folderPath, outputFileName, prompt, craftxPath, clone } =
       body;
+
+      
+      if(clone){
+        const craftxBlob = await CloudKeeperUtil.downloadFile(AppConstants.TEMPLATES_ROOT_DIR_ALIAS, clone);
+        const parsedCraftx = await CrafterUtil.parseCraftx(craftxBlob);
+        markup = parsedCraftx.ejsContent??"";
+        style = parsedCraftx.style??"*{}";
+        data = JSON.stringify(parsedCraftx.data) ?? '{}';
+        console.log("Data",data);
+        outputFileName += ('_'+Date.now().toString());
+      }
 
       if(craftxPath) {
         console.log("Creating PDF from " + craftxPath);
@@ -31,28 +43,34 @@ export const saveController = async (request) => {
         );
       }
 
-    if (prompt) {
-      console.log('Building with Artificial Intelligence....');
-      const {
-        markup: newMarkup,
-        style: newStyle,
-        data: newData,
-        outputFileName: newOutputFileName,
-      } = await builderService.buildWithAi(prompt);
-      markup = newMarkup;
-      style = newStyle;
-      data = newData;
-      outputFileName = outputFileName + '_' + Date.now().toString();
-    }
+      if (prompt) {
+        console.log('Building with Artificial Intelligence....');
+        const {
+          markup: newMarkup,
+          style: newStyle,
+          data: newData,
+          outputFileName: newOutputFileName,
+        } = await builderService.buildWithAi(prompt);
+        markup = newMarkup;
+        style = newStyle;
+        data = newData;
+        outputFileName = outputFileName + '_' + Date.now().toString();
+      }
+    
     const { response } = await builderService.save({
       markup,
       style,
       data,
       uid,
       folderPath,
-      outputFileName,
-      isTemplate
+      outputFileName
     });
+    if(clone){
+      return new Response(JSON.stringify({ response: "Cloned Successfully" }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });  
+    }
     if (prompt) {
       const craftxBlob = await CloudKeeperUtil.downloadFile(uid, response);
       const pdfBlob = await CrafterUtil.buildPdf(craftxBlob);
