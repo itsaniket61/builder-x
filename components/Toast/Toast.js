@@ -14,7 +14,7 @@ export const showToast = (message, type = 'success' , options={}) => {
 };
 
 export const statusToast = (startMessage, successMessage, failureMessage) => {
-  const notify = () => toast({startMessage}, { autoClose: false });
+  const notify = () => toast(startMessage, { autoClose: false });
   return (promise) => {
     const toastId = notify();
     return promise
@@ -23,18 +23,16 @@ export const statusToast = (startMessage, successMessage, failureMessage) => {
       })
       .catch(() => {
         toast.error(failureMessage);
-
-      }).finally(()=>{
+      })
+      .finally(() => {
         toast.dismiss(toastId);
       });
   };
 };
 
-
-export const processWithToast = ({startMessage, successMessage, failureMessage}, promise) => {
-  statusToast(
-    startMessage,
-    successMessage,
-    failureMessage
-  )(promise);
-}
+export const processWithToast = (
+  { startMessage, successMessage, failureMessage },
+  promise
+) => {
+  statusToast(startMessage, successMessage, failureMessage)(promise);
+};

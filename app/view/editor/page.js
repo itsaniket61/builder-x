@@ -16,7 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Eye } from 'lucide-react';
+import { Eye, Save, SaveIcon } from 'lucide-react';
 
 function Editor() {
   const params = useSearchParams();
@@ -63,25 +63,18 @@ function Editor() {
     <div className='h-1/2 mt-14'>
       <div className='flex border'>
         <div className='w-min p-2'>
+          <Button variant='outline' size='icon' className='mb-1' onClick={save}>
+            <SaveIcon />
+          </Button>
           <Sheet key={side}>
             <SheetTrigger asChild>
-              <Button variant='outline'>
+              <Button variant='outline' size='icon' className='mb-1' onClick={preview}>
                 <Eye />
               </Button>
             </SheetTrigger>
             <SheetContent side={side} className='h-screen'>
               <SheetHeader>
                 <SheetTitle>{craftxFile || 'Loading....'}</SheetTitle>
-                <SheetFooter className='float-start'>
-                  <SheetClose asChild className='my-2 md:my-0'>
-                    <Button onClick={save} variant='outline' className='mx-2'>
-                      Save
-                    </Button>
-                  </SheetClose>
-                  <Button onClick={preview} variant='outline' className='mx-2'>
-                    Preview
-                  </Button>
-                </SheetFooter>
               </SheetHeader>
               <div className='p-1 h-screen overflow-scroll'>
                 {previewUrl && (

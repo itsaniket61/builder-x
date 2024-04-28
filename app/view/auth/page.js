@@ -83,22 +83,22 @@ function Auth() {
 
   return (
     <div className='w-full mt-14'>
-      <Card className='w-full max-w-sm mx-auto'>
-        <CardHeader>
-          <CardTitle className='text-2xl'>
-            {isSignInScreen ? 'Sign In' : 'Sign Up'}
-          </CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className='grid gap-4'>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setIsLoading(true);
-            }}
-          >
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setIsLoading(true);
+        }}
+      >
+        <Card className='w-full max-w-sm mx-auto'>
+          <CardHeader>
+            <CardTitle className='text-2xl'>
+              {isSignInScreen ? 'Sign In' : 'Sign Up'}
+            </CardTitle>
+            <CardDescription>
+              Enter your email below to login to your account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className='grid gap-4'>
             {!isSignInScreen && (
               <div className='grid gap-2'>
                 <Label htmlFor='email'>Name</Label>
@@ -139,33 +139,33 @@ function Auth() {
                 required
               />
             </div>
-          </form>
-        </CardContent>
-        {isLoading ? (
-          <div className='w-full'>
-            <div className='w-min mx-auto'>
-              <Loading />
+          </CardContent>
+          {isLoading ? (
+            <div className='w-full'>
+              <div className='w-min mx-auto'>
+                <Loading />
+              </div>
             </div>
-          </div>
-        ) : (
-          <CardFooter>
-            <Button
-              className='w-full mr-1'
-              onClick={(e) => {
-                e.preventDefault();
-                setIsLoading(true);
-              }}
-            >
-              {isSignInScreen ? 'Sign In' : 'Sign Up'}
-            </Button>
-            <Button variant='outline' onClick={switchAuth}>
-              {isSignInScreen
-                ? 'Create New Account'
-                : 'Already have a new account.'}
-            </Button>
-          </CardFooter>
-        )}
-      </Card>
+          ) : (
+            <CardFooter>
+              <Button
+                className='w-full mr-1'
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsLoading(true);
+                }}
+              >
+                {isSignInScreen ? 'Sign In' : 'Sign Up'}
+              </Button>
+              <Button variant='outline' onClick={switchAuth}>
+                {isSignInScreen
+                  ? 'Create New Account'
+                  : 'Already have a new account.'}
+              </Button>
+            </CardFooter>
+          )}
+        </Card>
+      </form>
     </div>
   );
 }
