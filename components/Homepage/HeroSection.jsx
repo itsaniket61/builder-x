@@ -21,7 +21,7 @@ function HeroSection() {
   }
 
   if (auth.isLoading) return (
-    <div class='flex justify-center items-center h-full'>
+    <div className='flex justify-center items-center h-screen'>
       <Loading />
     </div>
   );

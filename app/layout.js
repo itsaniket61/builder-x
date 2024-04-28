@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
           <div className="fixed top-0 z-50">
             <Navbar />
           </div>
-          <div className="pt-16 sm:pt-14">
+          <div>
             {children}
           </div>
           <ToastContainer/>

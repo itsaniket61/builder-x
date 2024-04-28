@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { buildUtil } from './Utils/buildUtil';
-import { showToast } from '@/components/Toast/Toast';
+import { processWithToast, showToast } from '@/components/Toast/Toast';
 import { useAuth } from '../auth/Hooks/useAuth';
 import {
   Card,
@@ -19,13 +19,6 @@ import Loading from '@/components/Loading/Loading';
 function Build() {
   const auth = useAuth('/view/build', '/view/auth');
 
-  const toastId = useRef(null);
-  const notify = () => (toastId.current = toast('Building...', { autoClose: false }));
-  const update = () =>
-    toast.update(toastId.current, {
-      autoClose: 100,
-    });
-
   const [formData, setFormData] = useState({
     location: '',
     fileName: '',
@@ -33,38 +26,25 @@ function Build() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    function build() {
-      if (isLoading) {
-        notify();
-        buildUtil
-          .buildWithAi({
-            folderPath: formData.location,
-            outputFileName: formData.fileName,
-            prompt: formData.prompt,
-          })
-          .then(() => {
-            setIsLoading(false);
-            showToast('Built successfully');
-          })
-          .catch((err) => {
-            setIsLoading(false);
-            showToast(err.message, 'error');
+  async function build() {
+    setIsLoading(true);
+      await buildUtil
+        .buildWithAi({
+          folderPath: formData.location,
+          outputFileName: formData.fileName,
+          prompt: formData.prompt,
+        }).then(()=>{
+          setFormData({
+            location: '',
+            fileName: '',
+            prompt: '',
           });
-      } else {
-        setFormData({
-          location: '',
-          fileName: '',
-          prompt: '',
-        });
-        update();
-      }
-    }
-    build();
-  }, [isLoading]);
+        })
+        .finally(() => setIsLoading(false));
+  };
 
   if(auth.isLoading) return (
-    <div class='flex justify-center items-center h-full'>
+    <div className='flex justify-center items-center h-screen'>
       <Loading />
     </div>
   );
@@ -82,12 +62,20 @@ function Build() {
               <form
                 className='mt-2'
                 onSubmit={(e) => {
-                  setIsLoading(true);
                   e.preventDefault();
+                  processWithToast(
+                    {
+                      startMessage: 'Building...',
+                      successMessage: 'Built successfully',
+                      failureMessage: 'Failed to build',
+                    },
+                    build()
+                  );
                 }}
               >
                 <Input
                   className='my-2'
+                  value={formData.location}
                   onChange={(e) => {
                     setFormData({ ...formData, location: e.target.value });
                   }}
@@ -95,20 +83,22 @@ function Build() {
                 />
                 <Input
                   className='my-2'
+                  value={formData.fileName}
                   onChange={(e) => {
                     setFormData({ ...formData, fileName: e.target.value });
                   }}
                   placeholder='File Name'
                 />
                 <Textarea
+                  className='my-2 w-full'
+                  value={formData.prompt}
                   onChange={(e) => {
                     setFormData({ ...formData, prompt: e.target.value });
                   }}
-                  className='my-2 w-full'
                   placeholder='Enter Promt for AI'
-                ></Textarea>
+                />
                 {isLoading ? (
-                  <p>Loading..</p>
+                  <Loading/>
                 ) : (
                   <Button type='submit'>Build</Button>
                 )}

@@ -1,6 +1,7 @@
 export const explorerUtil = {
-  getFiles: async ({ folderPath }) => {
-    const url = '/gateway/api/builder/storage/v1/list?folderPath=' + (folderPath??'');
+  getFiles: async ({ folderPath, getTemplates }) => {
+    let url = '/gateway/api/builder/storage/v1/list?folderPath=' + (folderPath??'');
+    if(getTemplates) url = '/gateway/api/builder/storage/v1/list/templates';
     const req = await fetch(url);
     if (req.ok) {
       const res = await req.json();

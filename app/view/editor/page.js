@@ -6,24 +6,25 @@ import { editorUtil } from './Utils/editorUtil';
 import { useSearchParams } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { showToast } from '@/components/Toast/Toast';
+import { processWithToast, showToast, statusToast } from '@/components/Toast/Toast';
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Eye } from 'lucide-react';
+import { Eye, SaveIcon } from 'lucide-react';
+import DynamicForm from './components/DynamicForm';
 
 function Editor() {
+
   const params = useSearchParams();
   const craftxFile = params.get('craftx');
   const [markup, setMarkup] = useState('');
   const [style, setStyle] = useState('');
   const [data, setData] = useState('');
+  const [jsonData, setJsonData] = useState({});
   const [previewUrl, setPreviewUrl] = useState(undefined);
 
   const preview = async () => {
@@ -37,13 +38,14 @@ function Editor() {
   };
 
   const save = async () => {
-    try {
-      const save = await editorUtil.save({ markup, style, data, filePath:craftxFile });
-      showToast('Saved Successfully');
-    } catch (error) {
-      console.error(error);
-      showToast(error, 'error');
-    }
+    processWithToast(
+      {
+        startMessage: 'Saving file...',
+        successMessage: 'File saved successfully',
+        failureMessage: 'Failed to save file',
+      },
+      editorUtil.save({ markup, style, data, filePath: craftxFile })
+    );
   };
 
   useEffect(() => {
@@ -53,34 +55,33 @@ function Editor() {
       setMarkup(parsedCraftx.ejsContent??'');
       setStyle(parsedCraftx.style??'*{}');
       setData(JSON.stringify(parsedCraftx.data ?? ''));
+      setJsonData(parsedCraftx.data ?? {});
     };
     parseCraftx(craftxFile);
   }, []);
 
   const side = "bottom";
   return (
-    <div className='h-1/2'>
+    <div className='h-1/2 mt-14'>
       <div className='flex border'>
         <div className='w-min p-2'>
+          <Button variant='outline' size='icon' className='mb-1' onClick={save}>
+            <SaveIcon />
+          </Button>
           <Sheet key={side}>
             <SheetTrigger asChild>
-              <Button variant='outline'>
+              <Button
+                variant='outline'
+                size='icon'
+                className='mb-1'
+                onClick={preview}
+              >
                 <Eye />
               </Button>
             </SheetTrigger>
             <SheetContent side={side} className='h-screen'>
               <SheetHeader>
                 <SheetTitle>{craftxFile || 'Loading....'}</SheetTitle>
-                <SheetFooter className='float-start'>
-                  <SheetClose asChild className='my-2 md:my-0'>
-                    <Button onClick={save} variant='outline' className='mx-2'>
-                      Save
-                    </Button>
-                  </SheetClose>
-                  <Button onClick={preview} variant='outline' className='mx-2'>
-                    Preview
-                  </Button>
-                </SheetFooter>
               </SheetHeader>
               <div className='p-1 h-screen overflow-scroll'>
                 {previewUrl && (
@@ -94,11 +95,23 @@ function Editor() {
           <Tabs defaultValue='markup' className='w-full'>
             <div className='p-1'>
               <TabsList className='w-full md:w-min'>
+                <TabsTrigger value='data'>DATA</TabsTrigger>
                 <TabsTrigger value='markup'>MARKUP</TabsTrigger>
                 <TabsTrigger value='style'>STYLE</TabsTrigger>
-                <TabsTrigger value='data'>DATA</TabsTrigger>
               </TabsList>
             </div>
+            <TabsContent value='data'>
+              <div className='p-2'>
+                <DynamicForm
+                  jsonData={jsonData}
+                  onChange={(changedData) => {
+                    setData(JSON.stringify(changedData));
+                    setJsonData(changedData);
+                    console.log(changedData, data);
+                  }}
+                />
+              </div>
+            </TabsContent>
             <TabsContent value='markup'>
               <Textarea
                 className='h-screen'
@@ -111,13 +124,6 @@ function Editor() {
                 className='h-screen'
                 value={style}
                 onChange={(e) => setStyle(e.target.value)}
-              />
-            </TabsContent>
-            <TabsContent value='data'>
-              <Textarea
-                className='h-screen'
-                value={data}
-                onChange={(e) => setData(e.target.value)}
               />
             </TabsContent>
           </Tabs>

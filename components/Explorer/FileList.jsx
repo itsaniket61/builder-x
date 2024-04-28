@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import ContextMenu from '../ui/context-menu';
-import { showToast } from '../Toast/Toast';
+import { processWithToast, showToast } from '../Toast/Toast';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,8 +16,9 @@ import { EllipsisVertical, RefreshCcw } from 'lucide-react';
 import { buildUtil } from '@/app/view/build/Utils/buildUtil';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '../ui/skeleton';
+import { templateUtil } from '@/app/view/explorer/templates/Utils/templateUtil';
 
-const FileList = ({ folderPath, files, selectFolder, refresh }) => {
+const FileList = ({ folderPath, files, selectFolder, refresh, isTemplatesList }) => {
   const router = useRouter();
   
   const iconsMap = {
@@ -41,6 +42,32 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
   const handleContextMenu = (event, file) => {
     event.preventDefault();
     const fileExtension = file.name.split('.').at(-1);
+    
+    const templateMenuOptions = [
+      {
+        label: 'Clone',
+        action: async () => {
+          const folderPath = prompt("Enter folder path");
+          const fileName = prompt("Enter file name");
+            processWithToast({
+              startMessage: 'Cloning...',
+              successMessage: 'File cloned successfully',
+              failureMessage: 'Failed to clone file',
+            },
+              templateUtil.cloneTemplate({
+                folderPath: folderPath,
+                outputFileName: fileName,
+                cloneTemplate: file.name,
+              })
+            );
+        },
+      },
+      {
+        label: 'Add to Favorites',
+        action: () => {},
+      },
+    ];
+    
     const folderMenuOptions = [
       {
         label: 'Rename',
@@ -69,11 +96,17 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
       {
         label: 'Delete',
         action: async () => {
-          await explorerUtil.deleteFile({
-            filePath: routingStack.join('/') + '/' + file.name,
-          });
-          refresh();
-          showToast('File deleted successfully');
+          processWithToast(
+            {
+              startMessage: 'Deleting file...',
+              successMessage: 'File deleted successfully',
+              failureMessage: 'Failed to delete file',
+            },
+            explorerUtil.deleteFile({
+              filePath: routingStack.join('/') + '/' + file.name,
+            }).then(()=>
+          refresh())
+          );
         },
       },
     ];
@@ -118,6 +151,11 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
         options: folderMenuOptions,
         position: { x: event.clientX, y: event.clientY },
       });
+    } else if (isTemplatesList) {
+      setContextMenuOptions({
+        options: templateMenuOptions,
+        position: { x: event.clientX, y: event.clientY },
+      })
     } else {
       setContextMenuOptions({
         options: fileMenuOptions,
@@ -126,17 +164,9 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
     }
   };
 
-
-  if(files && files.length==0)  return (<div className='flex justify-center items-center h-full'>
-          <div className='mx-auto h-1/2'>
-            <Image src='/icons/empty-box.png' height={125} width={125} />
-            <h4 className='text-center'>Folder is Empty</h4>
-          </div>
-        </div>);
-
   return (
     <>
-       <Breadcrumb>
+      <Breadcrumb className='fixed w-full bg-card z-50 pl-4'>
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink
@@ -163,50 +193,60 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
           ))}
           <div className='ml-auto mr-3'>
             <Button
+              size='icon'
               variant='outline'
               className='cursor-pointer'
               onClick={refresh}
             >
-              <RefreshCcw />
-              <span className='px-1'>Refresh</span>
+              <RefreshCcw className={!files && 'animate-spin'} />
             </Button>
           </div>
         </BreadcrumbList>
       </Breadcrumb>
-        <div className='w-screen overflow-x-auto'>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className='w-[100px]'>Type</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Modified</TableHead>
-              </TableRow>
-            </TableHeader>
-            {!files ?
-            Array(10).fill(0).map((e,index)=>{
-              return (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton className='h-12 w-12 rounded-full' />
-                  </TableCell>
-                  <TableCell>
-                    <div className='flex'>
-                      <span className='hover:text-primary w-full'>
-                        <Skeleton className='h-4 w-[250px] my-1' />
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-[250px] my-1' />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-[250px] my-1' />
-                  </TableCell>
-                </TableRow>
-              );
-            })
-            : <TableBody>
+      {(files && files.length == 0) ?
+      (<div className='flex justify-center items-center h-full w-screen'>
+        <div className='mx-auto h-1/2'>
+          <Image src='/icons/empty-box.png' height={125} width={125} />
+          <h4 className='text-center'>Folder is Empty</h4>
+        </div>
+      </div>):
+      (<div className='w-screen mt-10'>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className='w-[100px]'>Type</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Modified</TableHead>
+            </TableRow>
+          </TableHeader>
+          {!files ? (
+            Array(10)
+              .fill(0)
+              .map((e, index) => {
+                return (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton className='h-12 w-12 rounded-full' />
+                    </TableCell>
+                    <TableCell>
+                      <div className='flex'>
+                        <span className='hover:text-primary w-full'>
+                          <Skeleton className='h-4 w-[250px] my-1' />
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='h-4 w-[250px] my-1' />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='h-4 w-[250px] my-1' />
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+          ) : (
+            <TableBody>
               {files.map((file, index) => {
                 const fileName = file.name;
                 const ext = fileName.split('.').at(-1);
@@ -236,7 +276,10 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
                         >
                           {fileName}
                         </span>
-                        <span className='w-min' onClick={(e) => handleContextMenu(e, file)}>
+                        <span
+                          className='w-min'
+                          onClick={(e) => handleContextMenu(e, file)}
+                        >
                           <EllipsisVertical className='hover:text-primary inline float-right text-xs text-gray-500' />
                         </span>
                       </div>
@@ -250,9 +293,10 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
                   </TableRow>
                 );
               })}
-            </TableBody>}
-          </Table>
-        </div>
+            </TableBody>
+          )}
+        </Table>
+      </div>)}
       <ContextMenu
         options={contextMenuOptions.options}
         position={contextMenuOptions.position || { x: 0, y: 0 }}
