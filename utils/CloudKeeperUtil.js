@@ -6,7 +6,7 @@ export const CloudKeeperUtil = {
       type: type,
     });
     if(folderPath.startsWith('/')) folderPath = folderPath.substr(1);
-    const folderName = 'BuildersX/' + uid + '/' +folderPath;
+    const folderName = AppConstants.ROOT_DIR_ALIAS + '/' + uid + '/' +folderPath;
     const url = AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/file';
     const formData = new FormData();
     formData.append('file', blob, fileName );
@@ -30,7 +30,7 @@ export const CloudKeeperUtil = {
     return response.ok;
   },
   getDownloadUrl: async (uid, filePath)=>{
-    filePath = 'BuildersX/' + uid + '/' + filePath;
+    filePath = AppConstants.ROOT_DIR_ALIAS + '/' + uid + '/' + filePath;
     const url = AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/file?filePath=' + filePath;
     const response = await fetch(url, {
       method: 'GET',
@@ -50,7 +50,7 @@ export const CloudKeeperUtil = {
     return {downloadUrl};
   },
   downloadFile: async (uid, filePath)=>{
-    filePath = 'BuildersX/' + uid + '/' + filePath;
+    filePath = AppConstants.ROOT_DIR_ALIAS + '/' + uid + '/' + filePath;
     const url = AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/file?filePath=' + filePath;
     const response = await fetch(url, {
       method: 'GET',
@@ -73,7 +73,7 @@ export const CloudKeeperUtil = {
     return blob;
   },
   listAllFiles: async (uid, folderName)=>{
-    const pathStarter = 'BuildersX/' + uid;
+    const pathStarter = AppConstants.ROOT_DIR_ALIAS + '/' + uid;
     if(folderName){
       folderName = pathStarter + '/' + folderName;
     }else{
@@ -104,7 +104,7 @@ export const CloudKeeperUtil = {
     return files;
   },
   deleteFile: async (uid, filePath)=>{
-    filePath = 'BuildersX/' + uid + '/' + filePath;
+    filePath = AppConstants.ROOT_DIR_ALIAS + '/' + uid + '/' + filePath;
     const url = AppConstants.URLS.STORAGE_SERVICE_URL_V1 + '/file?path=' + filePath;
     const response = await fetch(url, {
       method: 'DELETE',

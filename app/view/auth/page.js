@@ -76,7 +76,7 @@ function Auth() {
   }, [isLoading, isSignInScreen]);
 
   if (auth.isLoading) return (
-    <div class='flex justify-center items-center h-screen'>
+    <div className='flex justify-center items-center h-screen'>
       <Loading />
     </div>
   );

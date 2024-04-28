@@ -9,21 +9,22 @@ import { Button } from '@/components/ui/button';
 import { processWithToast, showToast, statusToast } from '@/components/Toast/Toast';
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Eye, Save, SaveIcon } from 'lucide-react';
+import { Eye, SaveIcon } from 'lucide-react';
+import DynamicForm from './components/DynamicForm';
 
 function Editor() {
+
   const params = useSearchParams();
   const craftxFile = params.get('craftx');
   const [markup, setMarkup] = useState('');
   const [style, setStyle] = useState('');
   const [data, setData] = useState('');
+  const [jsonData, setJsonData] = useState({});
   const [previewUrl, setPreviewUrl] = useState(undefined);
 
   const preview = async () => {
@@ -54,6 +55,7 @@ function Editor() {
       setMarkup(parsedCraftx.ejsContent??'');
       setStyle(parsedCraftx.style??'*{}');
       setData(JSON.stringify(parsedCraftx.data ?? ''));
+      setJsonData(parsedCraftx.data ?? {});
     };
     parseCraftx(craftxFile);
   }, []);
@@ -68,7 +70,12 @@ function Editor() {
           </Button>
           <Sheet key={side}>
             <SheetTrigger asChild>
-              <Button variant='outline' size='icon' className='mb-1' onClick={preview}>
+              <Button
+                variant='outline'
+                size='icon'
+                className='mb-1'
+                onClick={preview}
+              >
                 <Eye />
               </Button>
             </SheetTrigger>
@@ -88,11 +95,23 @@ function Editor() {
           <Tabs defaultValue='markup' className='w-full'>
             <div className='p-1'>
               <TabsList className='w-full md:w-min'>
+                <TabsTrigger value='data'>DATA</TabsTrigger>
                 <TabsTrigger value='markup'>MARKUP</TabsTrigger>
                 <TabsTrigger value='style'>STYLE</TabsTrigger>
-                <TabsTrigger value='data'>DATA</TabsTrigger>
               </TabsList>
             </div>
+            <TabsContent value='data'>
+              <div className='p-2'>
+                <DynamicForm
+                  jsonData={jsonData}
+                  onChange={(changedData) => {
+                    setData(JSON.stringify(changedData));
+                    setJsonData(changedData);
+                    console.log(changedData, data);
+                  }}
+                />
+              </div>
+            </TabsContent>
             <TabsContent value='markup'>
               <Textarea
                 className='h-screen'
@@ -105,13 +124,6 @@ function Editor() {
                 className='h-screen'
                 value={style}
                 onChange={(e) => setStyle(e.target.value)}
-              />
-            </TabsContent>
-            <TabsContent value='data'>
-              <Textarea
-                className='h-screen'
-                value={data}
-                onChange={(e) => setData(e.target.value)}
               />
             </TabsContent>
           </Tabs>

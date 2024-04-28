@@ -132,14 +132,6 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
     }
   };
 
-
-  if(files && files.length==0)  return (<div className='flex justify-center items-center h-full'>
-          <div className='mx-auto h-1/2'>
-            <Image src='/icons/empty-box.png' height={125} width={125} />
-            <h4 className='text-center'>Folder is Empty</h4>
-          </div>
-        </div>);
-
   return (
     <>
       <Breadcrumb className='fixed w-full bg-card z-50 pl-4'>
@@ -174,12 +166,19 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
               className='cursor-pointer'
               onClick={refresh}
             >
-              <RefreshCcw className={!files && 'animate-spin'}/>
+              <RefreshCcw className={!files && 'animate-spin'} />
             </Button>
           </div>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className='w-screen mt-10'>
+      {(files && files.length == 0) ?
+      (<div className='flex justify-center items-center h-full w-screen'>
+        <div className='mx-auto h-1/2'>
+          <Image src='/icons/empty-box.png' height={125} width={125} />
+          <h4 className='text-center'>Folder is Empty</h4>
+        </div>
+      </div>):
+      (<div className='w-screen mt-10'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -265,7 +264,7 @@ const FileList = ({ folderPath, files, selectFolder, refresh }) => {
             </TableBody>
           )}
         </Table>
-      </div>
+      </div>)}
       <ContextMenu
         options={contextMenuOptions.options}
         position={contextMenuOptions.position || { x: 0, y: 0 }}

@@ -33,7 +33,7 @@ function Explorer() {
     
        if (isLoading) {
          return (
-           <div class='flex justify-center items-center h-screen'>
+           <div className='flex justify-center items-center h-screen'>
              <Loading />
            </div>
          );
@@ -55,7 +55,7 @@ function Explorer() {
        }
 
     if (auth.isLoading) return (
-      <div class='flex justify-center items-center h-screen'>
+      <div className='flex justify-center items-center h-screen'>
         <Loading />
       </div>
     );
