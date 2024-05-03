@@ -98,6 +98,11 @@ export const CloudKeeperUtil = {
     let files = responseBody.response;
     files.name = files.name.replace(pathStarter, '');
     for(let i = 0; i < files.children.length; i++){
+      if(files.children[i].name == "") {
+        files.children.splice(i, 1);
+        i--;
+        continue;
+      }
       files.children[i].name = files.children[i].name.replace(pathStarter, '');
     }
     if (!files) throw new Error('Failed to list files');
