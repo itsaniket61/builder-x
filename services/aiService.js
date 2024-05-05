@@ -46,7 +46,7 @@ const sendRequestToOpenAi = async (prompt, assistant = 'assistant', responseForm
     }
   }
 export const aiService = {
-    sendRequestToAI : (prompt, assistant='assistant', responseFormat='json') => {
+    sendRequestToAI : (prompt, assistant='assistant', responseFormat= { type: "json_object" }) => {
         const aiServer = process.env.AI_SERVER;
         if(!aiServer) throw new Error(`AI server not specified`);
         if(aiServer === AppConstants.AI_SERVERS.OPEN_AI){
