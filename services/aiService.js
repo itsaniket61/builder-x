@@ -50,7 +50,7 @@ export const aiService = {
         const aiServer = process.env.AI_SERVER;
         if(!aiServer) throw new Error(`AI server not specified`);
         if(aiServer === AppConstants.AI_SERVERS.OPEN_AI){
-            return sendRequestToOpenAi(prompt, assistant);
+            return sendRequestToOpenAi(prompt, assistant, responseFormat);
         }else if(aiServer === AppConstants.AI_SERVERS.GEMINI){
             return sendRequestToGemini(prompt,assistant,responseFormat);
         }
