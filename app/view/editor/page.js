@@ -53,7 +53,7 @@ function Editor() {
       const parsedCraftx = await editorUtil.parseCraftx(craftxFile);
       console.log(parsedCraftx);
       setMarkup(parsedCraftx.ejsContent??'');
-      setStyle(parsedCraftx.style??'*{}');
+      setStyle(parsedCraftx.cssContent ?? '*{}');
       setData(JSON.stringify(parsedCraftx.data ?? ''));
       setJsonData(parsedCraftx.data ?? {});
     };
