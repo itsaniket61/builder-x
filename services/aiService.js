@@ -17,6 +17,7 @@ const sendRequestToGemini = async (prompt, assistant='assitant') => {
 const sendRequestToOpenAi = async (prompt, assistant = 'assistant') => {
     const url = `https://api.openai.com/v1/chat/completions`;
     const options = {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.AI_API_KEY}`,

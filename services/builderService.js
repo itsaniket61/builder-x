@@ -78,7 +78,6 @@ const save = async ({
 };
 
 const buildWithAi = async (prompt) => {
-  const aiServer = process.env.AI_SERVER;
   console.log('Building file with ai... ' + prompt);
   const tempPrompt = prompt;
   try {
@@ -95,10 +94,11 @@ const buildWithAi = async (prompt) => {
   Fllow above instructions strictly and ${prompt}
 `;
     let text = await aiService.sendRequestToAI(prompt, 'developer');
+    console.log(text);
     return JSON.parse(text);
   } catch (error) {
     console.log(error.message, 'Retrying...');
-    return buildWithAi(tempPrompt);
+    // return buildWithAi(tempPrompt);
   }
 };
 
