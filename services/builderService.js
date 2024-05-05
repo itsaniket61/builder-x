@@ -1,6 +1,6 @@
 import { CloudKeeperUtil } from '@/utils/CloudKeeperUtil';
 import { CrafterUtil } from '@/utils/CrafterUtil';
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+import { aiService } from './aiService';
 
 const fs = require('fs');
 const archiver = require('archiver');
@@ -55,7 +55,7 @@ const save = async ({
   data,
   uid,
   folderPath,
-  outputFileName
+  outputFileName,
 }) => {
   try {
     // Generate the zip file using the create function
@@ -64,21 +64,22 @@ const save = async ({
     const uploadFile = await CloudKeeperUtil.uploadFile(buffer, uid, {
       folderPath,
       fileName: outputFileName + '.craftx',
-      type: 'application/octet-stream'
+      type: 'application/octet-stream',
     });
 
     if (!uploadFile) throw new Error('Error uploading file');
 
     // Return success message if upload is successful
-    return { response: folderPath+'/'+outputFileName +'.craftx' };
+    return { response: folderPath + '/' + outputFileName + '.craftx' };
   } catch (error) {
     console.error('Error saving file:', error);
     throw error; // Re-throw the error to propagate it further
   }
 };
 
-const buildWithAi = async(prompt)=>{
-  console.log("Building file with ai... "+ prompt);
+const buildWithAi = async (prompt) => {
+  const aiServer = process.env.AI_SERVER;
+  console.log('Building file with ai... ' + prompt);
   const tempPrompt = prompt;
   try {
     prompt = `
@@ -93,17 +94,13 @@ const buildWithAi = async(prompt)=>{
   Give response only in json nothing else.
   Fllow above instructions strictly and ${prompt}
 `;
-    const genAI = new GoogleGenerativeAI(process.env.AI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    let text = response.text();
+    let text = await aiService.sendRequestToAI(prompt, 'developer');
     return JSON.parse(text);
   } catch (error) {
-    console.log(error.message, "Retrying...");
+    console.log(error.message, 'Retrying...');
     return buildWithAi(tempPrompt);
   }
-}
+};
 
 const buildPDF = async ({ markup, style, data }) => {
   try {
@@ -115,8 +112,8 @@ const buildPDF = async ({ markup, style, data }) => {
     console.error('Error saving file:', error);
     throw error; // Re-throw the error to propagate it further
   }
-}
+};
 
-const builderService = {create, save, buildWithAi, buildPDF}
+const builderService = { create, save, buildWithAi, buildPDF };
 
 export default builderService;

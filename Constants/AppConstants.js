@@ -6,4 +6,8 @@ export const AppConstants = {
     CRAFTER_SERVICE_URL_V1: process.env.CRAFTER_SERVICE_URL + '/craft/v1',
     AUTH_SERVICE_URL_V1: '/gateway/auth',
   },
+  AI_SERVERS: {
+    OPEN_AI : 'open-ai',
+    GEMINI: 'gemini',
+  }
 };
