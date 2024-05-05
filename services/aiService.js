@@ -1,20 +1,20 @@
 import { AppConstants } from "@/Constants/AppConstants";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const sendRequestToGemini = async (prompt, assistant='assitant') => {
+const sendRequestToGemini = async (prompt, assistant='assitant', responseFormat='json') => {
     const genAI = new GoogleGenerativeAI(process.env.AI_API_KEY);
     const model = genAI.getGenerativeModel({
       model: process.env.AI_MODEL || 'gemini-pro',
     });
     const result = await model.generateContent(
-      `Please act as ${assistant}. ${prompt}`
+      `Please act as ${assistant}. ${prompt} and your response format should be ${responseFormat}`
     );
     const response = await result.response;
     let text = response.text();
     return text;
   }
 
-const sendRequestToOpenAi = async (prompt, assistant = 'assistant') => {
+const sendRequestToOpenAi = async (prompt, assistant = 'assistant', responseFormat='json') => {
     const url = `https://api.openai.com/v1/chat/completions`;
     const options = {
       method: 'POST',
@@ -24,6 +24,7 @@ const sendRequestToOpenAi = async (prompt, assistant = 'assistant') => {
       },
       body: JSON.stringify({
         model: process.env.AI_MODEL || 'gpt-3.5-turbo',
+        response_format: responseFormat,
         messages: [
           {
             role: 'system',
@@ -45,13 +46,13 @@ const sendRequestToOpenAi = async (prompt, assistant = 'assistant') => {
     }
   }
 export const aiService = {
-    sendRequestToAI : (prompt, assistant='assistant') => {
+    sendRequestToAI : (prompt, assistant='assistant', responseFormat='json') => {
         const aiServer = process.env.AI_SERVER;
         if(!aiServer) throw new Error(`AI server not specified`);
         if(aiServer === AppConstants.AI_SERVERS.OPEN_AI){
             return sendRequestToOpenAi(prompt, assistant);
         }else if(aiServer === AppConstants.AI_SERVERS.GEMINI){
-            return sendRequestToGemini(prompt,assistant);
+            return sendRequestToGemini(prompt,assistant,responseFormat);
         }
     }
 };
