@@ -98,7 +98,9 @@ const buildWithAi = async (prompt) => {
     return JSON.parse(text);
   } catch (error) {
     console.log(error.message, 'Retrying...');
-    // return buildWithAi(tempPrompt);
+    if(process.env.AI_ENABLE_FALLBACK){
+      return buildWithAi(tempPrompt);
+    } 
   }
 };
 
