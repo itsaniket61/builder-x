@@ -86,7 +86,7 @@ const buildWithAi = async (prompt) => {
       I need a JSON response containing HTML markup, CSS styles, and data for use in an EJS template. Follow these instructions strictly:
       Markup: The HTML should be within the <body> tag only, using EJS syntax (<%= $.key %>) to access data. Do not include <html>, <style>, or any other tags outside the <body> tag.
       Style: Provide CSS styling with a professional design. Ensure proper color schemes, fonts, and layout that are aesthetically pleasing.
-      Data: Include JSON data that will be used within the EJS template. The data should be realistic and meaningful.
+      Data: Include JSON data that will be used within the EJS template. The data should be realistic and meaningful. Make sure that the data does not contain nested Object, value must be string or array
 
       Output Format: The response should be a single-level JSON object (not nested) with the following keys:
       "markup": HTML content within the <body> tag
