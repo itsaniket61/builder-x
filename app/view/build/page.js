@@ -85,7 +85,7 @@ function Build() {
                   onChange={(e) => {
                     setFormData({ ...formData, location: e.target.value });
                   }}
-                  placeholder='Location'
+                  placeholder='Enter Collection Path........'
                 />
                 <Input
                   className='my-2'

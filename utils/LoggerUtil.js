@@ -11,15 +11,7 @@ export const LoggerUtil = {
   info: (...args) => console.info(LoggerUtil.formatLog('info', args)),
   error: (...args) => console.error(LoggerUtil.formatLog('error', args)),
   warn: (...args) => console.warn(LoggerUtil.formatLog('warn', args)),
-  debug: (...args) => {
-    if (!isProduction) {
-      console.debug(LoggerUtil.formatLog('debug', args));
-    }
-  },
+  debug: (...args) => console.debug(LoggerUtil.formatLog('debug', args)),
   log: (...args) => console.log(LoggerUtil.formatLog('log', args)),
-  trace: (...args) => {
-    if (!isProduction) {
-      console.trace(LoggerUtil.formatLog('trace', args));
-    }
-  },
+  trace: (...args) => console.trace(LoggerUtil.formatLog('trace', args))
 };
