@@ -15,9 +15,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
 import Loading from '@/components/Loading/Loading';
+import { useRouter } from 'next/navigation';
 
 function Build() {
   const auth = useAuth('/view/build', '/view/auth');
+
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     location: '',
@@ -33,12 +36,15 @@ function Build() {
           folderPath: formData.location,
           outputFileName: formData.fileName,
           prompt: formData.prompt,
-        }).then(()=>{
+        }).then(async (data)=>{
+          const {response} = await data.json();
+          router.push('/view/editor?craftx='+response);
           setFormData({
             location: '',
             fileName: '',
             prompt: '',
           });
+          router.push("");
         })
         .finally(() => setIsLoading(false));
   };

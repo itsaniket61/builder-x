@@ -1,4 +1,5 @@
 import { AppConstants } from "@/Constants/AppConstants";
+import { LoggerUtil } from "@/utils/LoggerUtil";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const sendRequestToGemini = async (prompt, assistant='assitant', responseFormat='json') => {
@@ -49,6 +50,7 @@ export const aiService = {
     sendRequestToAI : (prompt, assistant='assistant', responseFormat= { type: "json_object" }) => {
         const aiServer = process.env.AI_SERVER;
         if(!aiServer) throw new Error(`AI server not specified`);
+        LoggerUtil.debug("Promt request: " + JSON.stringify(prompt));
         if(aiServer === AppConstants.AI_SERVERS.OPEN_AI){
             return sendRequestToOpenAi(prompt, assistant, responseFormat);
         }else if(aiServer === AppConstants.AI_SERVERS.GEMINI){

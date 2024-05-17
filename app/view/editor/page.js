@@ -92,7 +92,7 @@ function Editor() {
           </Sheet>
         </div>
         <div className='w-full border'>
-          <Tabs defaultValue='markup' className='w-full'>
+          <Tabs defaultValue='data' className='w-full'>
             <div className='p-1'>
               <TabsList className='w-full md:w-min'>
                 <TabsTrigger value='data'>DATA</TabsTrigger>
