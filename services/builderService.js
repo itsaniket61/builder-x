@@ -82,16 +82,25 @@ const buildWithAi = async (prompt) => {
   const tempPrompt = prompt;
   try {
     prompt = `
-  This is the smaple output format in which i have markup code for HTML body written in ejs [Don't write tags : <html>, <style>, etc markup only contains <body> tag], style written is css and Json Data which is used in ejs. To use data in ejs $.key is used to access.
-  {
-    "markup":"<<h1>Hello, <%= $.name %>!</h1>",
-    "style":"body { background-color: #f0f0f0; }",
-    "data": "{ \"name\": \"Aniket\", \"age\": 30 }",
-    "outputFileName":"Aniket"
-  }
-  Give best possible html markup and proper colours in css template with professional designing. 
-  Give response only in json nothing else.
-  Fllow above instructions strictly and ${prompt}
+      I need a JSON response containing HTML markup, CSS styles, and data for use in an EJS template. Follow these instructions strictly:
+      Markup: The HTML should be within the <body> tag only, using EJS syntax (<%= $.key %>) to access data. Do not include <html>, <style>, or any other tags outside the <body> tag.
+      Style: Provide CSS styling with a professional design. Ensure proper color schemes, fonts, and layout that are aesthetically pleasing.
+      Data: Include JSON data that will be used within the EJS template. The data should be realistic and meaningful.
+
+      Output Format: The response should be a single-level JSON object (not nested) with the following keys:
+      "markup": HTML content within the <body> tag
+      "style": CSS styles
+      "data": JSON string representing the data
+      "outputFileName": Name of the output file
+      Sample Output Format:
+      {
+        "markup": "<h1>Hello, <%= $.name %>!</h1>",
+        "style": "body { background-color: #f0f0f0; }",
+        "data": "{ \"name\": \"Aniket\", \"age\": 30 }",
+        "outputFileName": "Aniket"
+      }
+      Design Requirements: The HTML and CSS should have the best possible professional design and colors.
+      Please follow these instructions strictly and include the following placeholder text in your response: ${prompt}.
 `;
     let text = await aiService.sendRequestToAI(prompt, 'developer');
     console.log(text);
