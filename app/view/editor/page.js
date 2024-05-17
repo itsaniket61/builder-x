@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/sheet';
 import { Eye, SaveIcon } from 'lucide-react';
 import DynamicForm from './components/DynamicForm';
+import { LoggerUtil } from '@/utils/LoggerUtil';
 
 function Editor() {
 
@@ -51,7 +52,6 @@ function Editor() {
   useEffect(() => {
     const parseCraftx = async (craftxFile) => {
       const parsedCraftx = await editorUtil.parseCraftx(craftxFile);
-      console.log(parsedCraftx);
       setMarkup(parsedCraftx.ejsContent??'');
       setStyle(parsedCraftx.cssContent ?? '*{}');
       setData(JSON.stringify(parsedCraftx.data ?? ''));
@@ -107,7 +107,6 @@ function Editor() {
                   onChange={(changedData) => {
                     setData(JSON.stringify(changedData));
                     setJsonData(changedData);
-                    console.log(changedData, data);
                   }}
                 />
               </div>

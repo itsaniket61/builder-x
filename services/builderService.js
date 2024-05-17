@@ -1,6 +1,7 @@
 import { CloudKeeperUtil } from '@/utils/CloudKeeperUtil';
 import { CrafterUtil } from '@/utils/CrafterUtil';
 import { aiService } from './aiService';
+import { LoggerUtil } from '@/utils/LoggerUtil';
 
 const fs = require('fs');
 const archiver = require('archiver');
@@ -78,7 +79,7 @@ const save = async ({
 };
 
 const buildWithAi = async (prompt) => {
-  console.log('Building file with ai... ' + prompt);
+  LoggerUtil.info('Building file with ai... ' + prompt);
   const tempPrompt = prompt;
   try {
     prompt = `
@@ -103,10 +104,13 @@ const buildWithAi = async (prompt) => {
       Please follow these instructions strictly and include the following placeholder text in your response: ${prompt}.
 `;
     let text = await aiService.sendRequestToAI(prompt, 'developer');
-    console.log(text);
+    LoggerUtil.info(text);
     return JSON.parse(text);
   } catch (error) {
-    console.log(error.message, 'Retrying...');
+    LoggerUtil.trace(
+      error.message,
+      'Retry flag is ' + process.env.AI_ENABLE_FALLBACK
+    );
     if(process.env.AI_ENABLE_FALLBACK){
       return buildWithAi(tempPrompt);
     } 

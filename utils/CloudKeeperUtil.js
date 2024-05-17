@@ -1,4 +1,5 @@
 import { AppConstants } from '@/Constants/AppConstants';
+import { LoggerUtil } from './LoggerUtil';
 
 export const CloudKeeperUtil = {
   uploadFile: async (buffer, uid, { folderPath, fileName, type, customMetadata }) => {
@@ -26,7 +27,7 @@ export const CloudKeeperUtil = {
     }
 
     const responseBody = await response.json();
-    console.log('Upload successful:', responseBody);
+    LoggerUtil.debug('Upload successful:', responseBody);
     return response.ok;
   },
   getDownloadUrl: async (uid, filePath)=>{
@@ -69,7 +70,7 @@ export const CloudKeeperUtil = {
     const downloadRes = await fetch(downloadUrl);
     if(!downloadRes.ok) throw new Error('Failed to download from URL');
     const blob = await downloadRes.blob();
-    console.log('Download successful');
+    LoggerUtil.debug('Download successful');
     return blob;
   },
   listAllFiles: async (uid, folderName)=>{

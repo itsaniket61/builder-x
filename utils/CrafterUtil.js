@@ -1,4 +1,5 @@
 import { AppConstants } from "@/Constants/AppConstants";
+import { LoggerUtil } from "./LoggerUtil";
 
 export const CrafterUtil = {
   buildPdf: async (craftxBlob) => {
@@ -11,12 +12,12 @@ export const CrafterUtil = {
       body: formData,
     });
     if(!res.ok) throw new Error('Could not create PDF');
-    console.log("PDF created successfully");
+    LoggerUtil.info("PDF created successfully");
     return await res.blob();
   },
   parseCraftx: async (craftxBlob) => {
     const url = AppConstants.URLS.CRAFTER_SERVICE_URL_V1 + '/craftx/parse';
-    console.log(url);
+    LoggerUtil.debug(url);
     const formData = new FormData();
     formData.append('craftx', craftxBlob, 'input.craftx');
     const res = await fetch(url, {
@@ -24,7 +25,7 @@ export const CrafterUtil = {
       body: formData,
     });
     if (!res.ok) throw new Error('Could not parse Craftx');
-    console.log('Craftx parsed successfully');
+    LoggerUtil.info('Craftx parsed successfully');
     return await res.json();
   }
 };

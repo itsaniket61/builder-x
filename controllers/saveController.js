@@ -1,6 +1,7 @@
 import { AppConstants } from '@/Constants/AppConstants';
 import { CloudKeeperUtil } from '@/utils/CloudKeeperUtil';
 import { CrafterUtil } from '@/utils/CrafterUtil';
+import { LoggerUtil } from '@/utils/LoggerUtil';
 import { NextResponse } from 'next/server';
 
 const { default: builderService } = require('@/services/builderService');
@@ -19,12 +20,12 @@ export const saveController = async (request) => {
         markup = parsedCraftx.ejsContent??"";
         style = parsedCraftx.style??"*{}";
         data = JSON.stringify(parsedCraftx.data) ?? '{}';
-        console.log("Data",data);
+        LoggerUtil.info("Data",data);
         outputFileName += ('_'+Date.now().toString());
       }
 
       if(craftxPath) {
-        console.log("Creating PDF from " + craftxPath);
+        LoggerUtil.info("Creating PDF from " + craftxPath);
         const craftxBlob = await CloudKeeperUtil.downloadFile(uid, craftxPath);
         const pdfBlob = await CrafterUtil.buildPdf(craftxBlob);
         await CloudKeeperUtil.uploadFile(await pdfBlob.arrayBuffer(), uid, {
@@ -44,7 +45,7 @@ export const saveController = async (request) => {
       }
 
       if (prompt) {
-        console.log('Building with Artificial Intelligence....');
+        LoggerUtil.info('Building with Artificial Intelligence....');
         const {
           markup: newMarkup,
           style: newStyle,
