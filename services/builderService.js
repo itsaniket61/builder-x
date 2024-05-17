@@ -82,27 +82,7 @@ const buildWithAi = async (prompt) => {
   LoggerUtil.info('Building file with ai... ' + prompt);
   const tempPrompt = prompt;
   try {
-    prompt = `
-      I need a JSON response containing HTML markup, CSS styles, and data for use in an EJS template. Follow these instructions strictly:
-      Markup: The HTML should be within the <body> tag only, using EJS syntax (<%= $.key %>) to access data. Do not include <html>, <style>, or any other tags outside the <body> tag.
-      Style: Provide CSS styling with a professional design. Ensure proper color schemes, fonts, and layout that are aesthetically pleasing.
-      Data: Include JSON data that will be used within the EJS template. The data should be realistic and meaningful.
-
-      Output Format: The response should be a single-level JSON object (not nested) with the following keys:
-      "markup": HTML content within the <body> tag
-      "style": CSS styles
-      "data": JSON string representing the data
-      "outputFileName": Name of the output file
-      Sample Output Format:
-      {
-        "markup": "<h1>Hello, <%= $.name %>!</h1>",
-        "style": "body { background-color: #f0f0f0; }",
-        "data": "{ \"name\": \"Aniket\", \"age\": 30 }",
-        "outputFileName": "Aniket"
-      }
-      Design Requirements: The HTML and CSS should have the best possible professional design and colors.
-      Please follow these instructions strictly (response JSON should be in sample output format) and : ${prompt}.
-`;
+    prompt = `Provide a JSON response with HTML markup, CSS styles, and data for an EJS template, adhering to these guidelines: HTML should be within the <body> tag using EJS syntax (<%= $.key %>) without any external tags. CSS should be professional with a good color scheme, fonts, and layout. Include realistic JSON data. The JSON object should have four keys: 'markup' (HTML content within <body>), 'style' (CSS styles), 'data' (JSON string for data), and 'outputFileName' (name of the output file). Ensure the HTML and CSS are professionally designed and follow the specified format strictly. Please follow these instructions strictly and provide the response JSON in the sample output format: ${prompt}.`;
     let text = await aiService.sendRequestToAI(prompt, 'JSON developer');
     LoggerUtil.info("******* Response from AI ********");
     LoggerUtil.info(text);
