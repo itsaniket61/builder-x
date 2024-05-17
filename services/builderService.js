@@ -101,9 +101,10 @@ const buildWithAi = async (prompt) => {
         "outputFileName": "Aniket"
       }
       Design Requirements: The HTML and CSS should have the best possible professional design and colors.
-      Please follow these instructions strictly and include the following placeholder text in your response: ${prompt}.
+      Please follow these instructions strictly (response JSON should be in sample output format) and : ${prompt}.
 `;
-    let text = await aiService.sendRequestToAI(prompt, 'developer');
+    let text = await aiService.sendRequestToAI(prompt, 'JSON developer');
+    LoggerUtil.info("******* Response from AI ********");
     LoggerUtil.info(text);
     return JSON.parse(text);
   } catch (error) {
