@@ -1,10 +1,7 @@
 'use client';
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
 import { editorUtil } from './Utils/editorUtil';
 import { useSearchParams } from 'next/navigation';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { processWithToast, showToast, statusToast } from '@/components/Toast/Toast';
 import {
@@ -15,15 +12,27 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Eye, SaveIcon } from 'lucide-react';
-import DynamicForm from './components/DynamicForm';
+import GrapesJSComponent from './components/GrapesJSComponent';
 
 function Editor() {
 
   const params = useSearchParams();
   const craftxFile = params.get('craftx');
+  
   const [markup, setMarkup] = useState('');
   const [style, setStyle] = useState('');
-  const [data, setData] = useState('');
+  const [intialMarkup, setIntialMarkup] = useState('');
+  const [initialStyle, setInitialStyle] = useState('');
+  const [data, setData] = useState('{}');
+
+  const handleMarkupChange = (html) => {
+    setMarkup(html);
+  };
+
+  const handleStyleChange = (css) => {
+    setStyle(css);
+  };
+
   const [jsonData, setJsonData] = useState({});
   const [previewUrl, setPreviewUrl] = useState(undefined);
 
@@ -53,6 +62,8 @@ function Editor() {
       const parsedCraftx = await editorUtil.parseCraftx(craftxFile);
       setMarkup(parsedCraftx.ejsContent??'');
       setStyle(parsedCraftx.cssContent ?? '*{}');
+      setIntialMarkup(parsedCraftx.ejsContent ?? '');
+      setInitialStyle(parsedCraftx.cssContent ?? '*{}');
       setData(JSON.stringify(parsedCraftx.data ?? ''));
       setJsonData(parsedCraftx.data ?? {});
     };
@@ -91,40 +102,12 @@ function Editor() {
           </Sheet>
         </div>
         <div className='w-full border'>
-          <Tabs defaultValue='data' className='w-full'>
-            <div className='p-1'>
-              <TabsList className='w-full md:w-min'>
-                <TabsTrigger value='data'>DATA</TabsTrigger>
-                <TabsTrigger value='markup'>MARKUP</TabsTrigger>
-                <TabsTrigger value='style'>STYLE</TabsTrigger>
-              </TabsList>
-            </div>
-            <TabsContent value='data'>
-              <div className='p-2'>
-                <DynamicForm
-                  jsonData={jsonData}
-                  onChange={(changedData) => {
-                    setData(JSON.stringify(changedData));
-                    setJsonData(changedData);
-                  }}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value='markup'>
-              <Textarea
-                className='h-screen'
-                value={markup}
-                onChange={(e) => setMarkup(e.target.value)}
-              />
-            </TabsContent>
-            <TabsContent value='style'>
-              <Textarea
-                className='h-screen'
-                value={style}
-                onChange={(e) => setStyle(e.target.value)}
-              />
-            </TabsContent>
-          </Tabs>
+          <GrapesJSComponent
+            initialMarkup={intialMarkup}
+            initialStyle={initialStyle}
+            onMarkupChange={handleMarkupChange}
+            onStyleChange={handleStyleChange}
+          />
         </div>
       </div>
     </div>

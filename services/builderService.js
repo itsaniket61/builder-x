@@ -83,25 +83,26 @@ const buildWithAi = async (prompt) => {
   const tempPrompt = prompt;
   try {
     prompt = `
-      I need a JSON response containing HTML markup, CSS styles, and data for use in an EJS template. Follow these instructions strictly:
-      Markup: The HTML should be within the <body> tag only, using EJS syntax (<%= $.key %>) to access data. Do not include <html>, <style>, or any other tags outside the <body> tag.
-      Style: Provide CSS styling with a professional design. Ensure proper color schemes, fonts, and layout that are aesthetically pleasing.
-      Data: Include JSON data that will be used within the EJS template. The data should be realistic and meaningful. Make sure that the data does not contain nested Object, value must be string or array
-
-      Output Format: The response should be a single-level JSON object (not nested) with the following keys:
-      "markup": HTML content within the <body> tag
-      "style": CSS styles
-      "data": JSON string representing the data
-      "outputFileName": Name of the output file
-      Sample Output Format:
-      {
-        "markup": "<h1>Hello, <%= $.name %>!</h1>",
-        "style": "body { background-color: #f0f0f0; }",
-        "data": "{ \"name\": \"Aniket\", \"age\": 30 }",
-        "outputFileName": "Aniket"
-      }
-      Design Requirements: The HTML and CSS should have the best possible professional design and colors.
-      Please follow these instructions strictly (response JSON should be in sample output format) and : ${prompt}.
+I need a JSON response containing HTML markup, CSS styles, and data for use in an EJS template. Please follow these instructions strictly:
+Output Format:
+The response should be a single-level JSON object (not nested) with the following keys:
+"markup": HTML content within the <body> tag
+"style": CSS styles
+"data": JSON string representing the data
+"outputFileName": Name of the output file
+Sample Output Format:
+{
+  "markup": "<h1>Hello, <%= $.name %>!</h1>",
+  "style": "body { background-color: #f0f0f0; font-family: Arial, sans-serif; }",
+  "data": "{ \"name\": \"Aniket\", \"age\": 30 }",
+  "outputFileName": "Aniket"
+}
+Response "data" key JSON Constraints:
+Ensure that the object does not contain nested objects.
+Values must be strings or array of Objects not other [Not Array of String, number,etc only it can be Object].
+Arrays cannot contain strings; they must contain objects.
+Please follow these instructions strictly and provide the response JSON accordingly.
+${prompt}
 `;
     let text = await aiService.sendRequestToAI(prompt, 'JSON developer');
     LoggerUtil.info("******* Response from AI ********");

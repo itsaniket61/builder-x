@@ -36,15 +36,13 @@ function Build() {
           folderPath: formData.location,
           outputFileName: formData.fileName,
           prompt: formData.prompt,
-        }).then(async (data)=>{
-          const {response} = await data.json();
+        }).then(async ({response})=>{
           router.push('/view/editor?craftx='+response);
           setFormData({
             location: '',
             fileName: '',
             prompt: '',
           });
-          router.push("");
         })
         .finally(() => setIsLoading(false));
   };

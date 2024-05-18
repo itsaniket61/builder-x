@@ -15,6 +15,7 @@ export const saveController = async (request) => {
 
       
       if(clone){
+        LoggerUtil.info("Cloning..." + clone);
         const craftxBlob = await CloudKeeperUtil.downloadFile(AppConstants.TEMPLATES_ROOT_DIR_ALIAS, clone);
         const parsedCraftx = await CrafterUtil.parseCraftx(craftxBlob);
         markup = parsedCraftx.ejsContent??"";

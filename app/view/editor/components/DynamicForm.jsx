@@ -22,7 +22,7 @@ function DynamicForm({ jsonData, onChange }) {
           <div key={index} className='border-gray-600 border-2 rounded p-2 m-4'>
             {value.map((item, subIndex) => (
               <div key={subIndex} className='p-1 mb-1 rounded-md'>
-                <label className='text-white text-lg'>
+                <label className='text-lg'>
                   <i>
                     {parentKey ? `${parentKey}.${key}` : key} {subIndex + 1}
                   </i>
