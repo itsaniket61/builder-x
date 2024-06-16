@@ -19,9 +19,8 @@ export function useAuth(successPath, failedPath) {
   const refreshToken = async () => {
     try {
       const response = await fetch(
-        AppConstants.URLS.AUTH_SERVICE_URL_V1 + '/refresh-token',
+        AppConstants.URLS.AUTH_SERVICE_URL_V1 + '/token',
         {
-          method: 'POST',
           credentials: 'include', // Assuming the refresh token is sent via cookies
         }
       );
@@ -50,7 +49,7 @@ export function useAuth(successPath, failedPath) {
 
         if (response.ok) {
           const data = await response.json();
-          const token = data.accessToken;
+          const token = data.token;
 
           if (isTokenExpired(token)) {
             const newToken = await refreshToken();
@@ -86,7 +85,7 @@ export function useAuth(successPath, failedPath) {
 
         if (response.ok) {
           const data = await response.json();
-          const token = data.accessToken;
+          const token = data.token;
 
           if (isTokenExpired(token)) {
             const newToken = await refreshToken();

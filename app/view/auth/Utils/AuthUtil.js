@@ -6,9 +6,8 @@ const isValidEmail = (email) => {
 };
 
 const isValidPassword = (password) => {
-  // Example: at least 8 characters, 1 uppercase, 1 lowercase, 1 number
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-  return passwordRegex.test(password);
+  // Example: at least 8 characters
+  return password?.length>=8;
 };
 
 export const AuthUtil = {
@@ -22,7 +21,7 @@ export const AuthUtil = {
       }
       if (!isValidPassword(password)) {
         throw new Error(
-          'Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, and one number'
+          'Password must be at least 8 characters long.'
         );
       }
 
