@@ -83,12 +83,12 @@ const buildWithAi = async (prompt) => {
   const tempPrompt = prompt;
   try {
     prompt = `
-I need a JSON response containing HTML markup, CSS styles, and data for use in an EJS template. Please follow these instructions strictly:
+I need a JSON response containing HTML markup, CSS styles, and data for use in an HTML template. Please follow these instructions strictly:
 Output Format:
 The response should be a single-level JSON object (not nested) with the following keys:
 "markup": HTML content within the <body> tag
 "style": CSS styles
-"data": JSON string representing the data
+"data": JSON string representing the data which is always empty
 "outputFileName": Name of the output file
 Sample Output Format:
 {
@@ -97,12 +97,7 @@ Sample Output Format:
   "data": "{ \"name\": \"Aniket\", \"age\": 30 }",
   "outputFileName": "Aniket"
 }
-Response "data" key JSON Constraints:
-Ensure that the object does not contain nested objects.
-Values must be strings or array of Objects not other [Not Array of String, number,etc only it can be Object].
-Arrays cannot contain strings; they must contain objects.
-Please follow these instructions strictly and provide the response JSON accordingly.
-${prompt}
+Give HTML output for : ${prompt}
 `;
     let text = await aiService.sendRequestToAI(prompt, 'JSON developer');
     LoggerUtil.info("******* Response from AI ********");
